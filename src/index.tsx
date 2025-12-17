@@ -52,6 +52,13 @@ app.get('/', (c) => {
             #langDropdown {
                 background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
                 box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+                color: white !important;
+            }
+            #langDropdown option {
+                background: white;
+                color: black;
+                font-weight: bold;
+                padding: 8px;
             }
         </style>
     </head>
