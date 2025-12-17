@@ -108,8 +108,18 @@ function changeLanguage(lang) {
   // Update document language
   document.documentElement.lang = lang;
   
-  // Note: In real implementation, you would update all text elements
-  // For now, this is a placeholder that can be expanded
+  // Update all translatable elements
+  document.querySelectorAll('[data-i18n]').forEach(element => {
+    const key = element.getAttribute('data-i18n');
+    if (t[key]) {
+      if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+        element.placeholder = t[key];
+      } else {
+        element.innerHTML = t[key];
+      }
+    }
+  });
+  
   console.log(`Language changed to: ${lang}`);
   
   // Store language preference

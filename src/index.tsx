@@ -87,17 +87,17 @@ app.get('/', (c) => {
         <main class="max-w-7xl mx-auto px-2 py-2 sm:px-4">
             <!-- Hero Section - 축소 -->
             <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-3 mb-2 text-white compact-spacing">
-                <h2 class="text-sm font-bold mb-2">안전한 다이어트 의약품 선택</h2>
-                <p class="text-xs mb-3 opacity-90">
+                <h2 class="text-sm font-bold mb-2" data-i18n="hero_title">안전한 다이어트 의약품 선택</h2>
+                <p class="text-xs mb-3 opacity-90" data-i18n="hero_subtitle">
                     바코드 스캔으로 즉시 확인하는<br>
                     국가별 허가 상태 · 위조 위험 · 합법 구매처
                 </p>
                 <div class="flex space-x-2">
                     <button id="scanBtn" class="bg-white text-blue-600 px-3 py-2 rounded text-xs font-semibold hover:bg-blue-50 transition flex-1">
-                        <i class="fas fa-camera mr-1"></i>스캔
+                        <i class="fas fa-camera mr-1"></i><span data-i18n="btn_scan">스캔</span>
                     </button>
                     <button class="bg-blue-700 text-white px-3 py-2 rounded text-xs font-semibold hover:bg-blue-800 transition flex-1">
-                        <i class="fas fa-list mr-1"></i>목록
+                        <i class="fas fa-list mr-1"></i><span data-i18n="btn_list">목록</span>
                     </button>
                 </div>
             </div>
@@ -106,18 +106,20 @@ app.get('/', (c) => {
             <div id="searchSection" class="bg-white rounded-lg shadow-sm compact-spacing">
                 <h3 class="text-xs font-bold text-gray-900 mb-2">
                     <i class="fas fa-search text-blue-600 mr-1"></i>
-                    제품 검색
+                    <span data-i18n="search_title">제품 검색</span>
                 </h3>
                 <div class="flex space-x-2">
                     <input 
                         type="text" 
                         id="searchInput"
                         placeholder="제품명 입력 (예: Wegovy)"
+                        data-i18n="search_placeholder"
                         class="flex-1 px-2 py-2 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
                     >
                     <button 
                         onclick="searchProducts()"
                         class="bg-blue-600 text-white px-4 py-2 rounded text-xs font-semibold hover:bg-blue-700 transition"
+                        data-i18n="btn_search"
                     >
                         검색
                     </button>
@@ -129,20 +131,21 @@ app.get('/', (c) => {
             <div id="scanSection" class="bg-white rounded-lg shadow-sm compact-spacing hidden">
                 <h3 class="text-xs font-bold text-gray-900 mb-2">
                     <i class="fas fa-barcode text-blue-600 mr-1"></i>
-                    바코드 스캔
+                    <span data-i18n="barcode_title">바코드 스캔</span>
                 </h3>
                 <div class="space-y-2">
                     <input 
                         type="text" 
                         id="barcodeInput"
                         placeholder="바코드 번호 (예: 0169-4517-02)"
+                        data-i18n="barcode_placeholder"
                         class="w-full px-2 py-2 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent"
                     >
                     <button 
                         onclick="scanBarcode()"
                         class="w-full bg-blue-600 text-white px-3 py-2 rounded text-xs font-semibold hover:bg-blue-700 transition"
                     >
-                        <i class="fas fa-search mr-1"></i>제품 확인
+                        <i class="fas fa-search mr-1"></i><span data-i18n="btn_verify">제품 확인</span>
                     </button>
                 </div>
                 <div id="scanResult" class="mt-3"></div>
@@ -154,8 +157,8 @@ app.get('/', (c) => {
                     <div class="text-blue-600 text-lg mb-1">
                         <i class="fas fa-globe"></i>
                     </div>
-                    <h3 class="text-xs font-bold text-gray-900 mb-1">허가 상태</h3>
-                    <p class="text-xs text-gray-600 leading-tight">
+                    <h3 class="text-xs font-bold text-gray-900 mb-1" data-i18n="feature1_title">허가 상태</h3>
+                    <p class="text-xs text-gray-600 leading-tight" data-i18n="feature1_desc">
                         전세계 규제기관 실시간 정보
                     </p>
                 </div>
@@ -163,8 +166,8 @@ app.get('/', (c) => {
                     <div class="text-red-600 text-lg mb-1">
                         <i class="fas fa-exclamation-triangle"></i>
                     </div>
-                    <h3 class="text-xs font-bold text-gray-900 mb-1">위조 탐지</h3>
-                    <p class="text-xs text-gray-600 leading-tight">
+                    <h3 class="text-xs font-bold text-gray-900 mb-1" data-i18n="feature2_title">위조 탐지</h3>
+                    <p class="text-xs text-gray-600 leading-tight" data-i18n="feature2_desc">
                         AI 기반 위험 패턴 분석
                     </p>
                 </div>
@@ -172,8 +175,8 @@ app.get('/', (c) => {
                     <div class="text-green-600 text-lg mb-1">
                         <i class="fas fa-check-circle"></i>
                     </div>
-                    <h3 class="text-xs font-bold text-gray-900 mb-1">합법 구매</h3>
-                    <p class="text-xs text-gray-600 leading-tight">
+                    <h3 class="text-xs font-bold text-gray-900 mb-1" data-i18n="feature3_title">합법 구매</h3>
+                    <p class="text-xs text-gray-600 leading-tight" data-i18n="feature3_desc">
                         인증 약국만 연결
                     </p>
                 </div>
@@ -183,24 +186,24 @@ app.get('/', (c) => {
             <div class="bg-white rounded-lg shadow-sm compact-spacing">
                 <h3 class="text-xs font-bold text-gray-900 mb-2">
                     <i class="fas fa-chart-bar text-blue-600 mr-1"></i>
-                    플랫폼 통계
+                    <span data-i18n="stats_title">플랫폼 통계</span>
                 </h3>
                 <div class="grid grid-cols-4 gap-2">
                     <div class="text-center">
                         <div class="text-sm font-bold text-blue-600 mb-1">2,000+</div>
-                        <div class="text-xs text-gray-600">제품</div>
+                        <div class="text-xs text-gray-600" data-i18n="stats1">제품</div>
                     </div>
                     <div class="text-center">
                         <div class="text-sm font-bold text-green-600 mb-1">50+</div>
-                        <div class="text-xs text-gray-600">국가</div>
+                        <div class="text-xs text-gray-600" data-i18n="stats2">국가</div>
                     </div>
                     <div class="text-center">
                         <div class="text-sm font-bold text-red-600 mb-1">1,000+</div>
-                        <div class="text-xs text-gray-600">차단</div>
+                        <div class="text-xs text-gray-600" data-i18n="stats3">차단</div>
                     </div>
                     <div class="text-center">
                         <div class="text-sm font-bold text-purple-600 mb-1">99.9%</div>
-                        <div class="text-xs text-gray-600">정확도</div>
+                        <div class="text-xs text-gray-600" data-i18n="stats4">정확도</div>
                     </div>
                 </div>
             </div>
