@@ -132,8 +132,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const langDropdown = document.getElementById('langDropdown');
   if (langDropdown) {
     langDropdown.value = savedLang;
-    changeLanguage(savedLang);
   }
+  // Apply translation immediately on page load
+  changeLanguage(savedLang);
 });
 
 // ============================================================================
