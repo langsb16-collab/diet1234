@@ -396,27 +396,58 @@ function displayScanResult(data) {
     <div class="bg-white border rounded p-2 mb-2">
       <h4 class="text-xs font-bold text-gray-900 mb-2">
         <i class="fas fa-globe text-blue-600 mr-1"></i>
-        국가별 허가 상태
+        국가별 허가 상태 (총 ${data.approvals.length}개국)
       </h4>
+      
+      <!-- 허가 요약 -->
+      <div class="grid grid-cols-3 gap-2 mb-2">
+        <div class="text-center p-2 bg-green-50 rounded">
+          <div class="text-sm font-bold text-green-600">${data.approvals.filter(a => a.status === 'approved').length}</div>
+          <div class="text-xs text-gray-600">승인</div>
+        </div>
+        <div class="text-center p-2 bg-yellow-50 rounded">
+          <div class="text-sm font-bold text-yellow-600">${data.approvals.filter(a => a.status === 'under_review').length}</div>
+          <div class="text-xs text-gray-600">심사중</div>
+        </div>
+        <div class="text-center p-2 bg-red-50 rounded">
+          <div class="text-sm font-bold text-red-600">${data.approvals.filter(a => a.status === 'not_approved' || a.status === 'withdrawn').length}</div>
+          <div class="text-xs text-gray-600">미승인</div>
+        </div>
+      </div>
+      
       <div class="space-y-2">
-        ${data.approvals.map(approval => `
-          <div class="border-l-4 ${approval.status === 'approved' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'} p-2 rounded">
-            <div class="flex items-start justify-between">
-              <div class="flex-1">
-                <p class="text-xs font-semibold text-gray-900 mb-0.5">
-                  ${approval.country_name} <span class="ml-1">${approval.icon}</span>
-                </p>
-                <p class="text-xs text-gray-700 mb-1">${approval.legality_summary}</p>
-                ${approval.status === 'approved' ? `
-                  <p class="text-xs text-gray-600">
-                    <i class="fas fa-check-circle mr-1"></i>
-                    ${approval.regulatory_body} | ${approval.prescription_status === 'rx' ? '처방약' : '일반약'}
-                  </p>
-                ` : ''}
+        ${data.approvals.map(approval => {
+          const statusColor = approval.status === 'approved' ? 'green' : 
+                             approval.status === 'under_review' ? 'yellow' : 'red';
+          const statusIcon = approval.status === 'approved' ? 'fa-check-circle' : 
+                            approval.status === 'under_review' ? 'fa-clock' : 'fa-times-circle';
+          const statusText = approval.status === 'approved' ? '✅ 승인됨' : 
+                            approval.status === 'under_review' ? '⏳ 심사중' : '❌ 미승인';
+          
+          return `
+            <div class="border-l-4 border-${statusColor}-500 bg-${statusColor}-50 p-2 rounded">
+              <div class="flex items-start justify-between mb-1">
+                <div class="flex-1">
+                  <div class="flex items-center gap-1 mb-0.5">
+                    <span class="text-xs font-bold text-gray-900">${approval.country_name}</span>
+                    <span>${approval.icon}</span>
+                    <span class="px-1.5 py-0.5 bg-white rounded text-xs font-semibold text-${statusColor}-700">
+                      ${statusText}
+                    </span>
+                  </div>
+                  <p class="text-xs text-gray-700 mb-1">${approval.legality_summary}</p>
+                  ${approval.status === 'approved' ? `
+                    <div class="flex items-center gap-2 text-xs text-gray-600">
+                      <span><i class="fas fa-building mr-1"></i>${approval.regulatory_body}</span>
+                      <span><i class="fas ${approval.prescription_status === 'rx' ? 'fa-prescription' : 'fa-pills'} mr-1"></i>${approval.prescription_status === 'rx' ? '처방약' : '일반약'}</span>
+                      ${approval.approval_date ? `<span><i class="fas fa-calendar mr-1"></i>${approval.approval_date}</span>` : ''}
+                    </div>
+                  ` : ''}
+                </div>
               </div>
             </div>
-          </div>
-        `).join('')}
+          `;
+        }).join('')}
       </div>
     </div>
     

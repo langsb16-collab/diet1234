@@ -30,6 +30,37 @@ apiRoutes.get('/health', (c) => {
 });
 
 // ============================================================================
+// Regulatory Bodies
+// ============================================================================
+
+apiRoutes.get('/regulatory-bodies', async (c) => {
+  try {
+    const { DB } = c.env;
+    const countryCode = c.req.query('country') || '';
+    
+    let query = 'SELECT * FROM regulatory_bodies WHERE is_active = 1';
+    const params: any[] = [];
+    
+    if (countryCode) {
+      query += ' AND country_code = ?';
+      params.push(countryCode);
+    }
+    
+    query += ' ORDER BY country_code, short_name';
+    
+    const result = await DB.prepare(query).bind(...params).all();
+    
+    return c.json({
+      regulatory_bodies: result.results || [],
+      total: result.results?.length || 0
+    });
+  } catch (error: any) {
+    console.error('Error fetching regulatory bodies:', error);
+    return c.json({ error: error.message }, 500);
+  }
+});
+
+// ============================================================================
 // Product Search
 // ============================================================================
 
