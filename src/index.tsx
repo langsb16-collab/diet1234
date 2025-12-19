@@ -214,6 +214,15 @@ app.get('/', (c) => {
                     </div>
                 </div>
             </div>
+
+            <!-- FAQ Section - 축소 -->
+            <div id="faqSection" class="bg-white rounded-lg shadow-sm compact-spacing hidden">
+                <h3 class="text-xs font-bold text-gray-900 mb-2">
+                    <i class="fas fa-question-circle text-blue-600 mr-1"></i>
+                    자주 묻는 질문 (FAQ)
+                </h3>
+                <div id="faqList" class="space-y-2"></div>
+            </div>
         </main>
 
         <!-- Footer - 축소 -->

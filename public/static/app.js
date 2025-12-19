@@ -534,3 +534,165 @@ function getSeverityIcon(severity) {
   };
   return icons[severity] || icons.moderate;
 }
+
+// ============================================================================
+// Safety Score Display
+// ============================================================================
+
+function getSafetyScoreBadge(score, grade) {
+  const gradeConfig = {
+    green: { bg: 'bg-green-100', text: 'text-green-800', label: '매우 안전', icon: 'fa-shield-check' },
+    light_green: { bg: 'bg-green-50', text: 'text-green-700', label: '비교적 안전', icon: 'fa-shield-alt' },
+    yellow: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: '주의 필요', icon: 'fa-exclamation-triangle' },
+    red: { bg: 'bg-red-100', text: 'text-red-800', label: '위험', icon: 'fa-ban' }
+  };
+  
+  const config = gradeConfig[grade] || gradeConfig.yellow;
+  
+  return `
+    <div class="${config.bg} ${config.text} rounded-lg p-3 text-center">
+      <div class="flex items-center justify-center gap-2 mb-1">
+        <i class="fas ${config.icon} text-lg"></i>
+        <span class="text-2xl font-bold">${score}</span>
+        <span class="text-xs">/ 100</span>
+      </div>
+      <div class="text-xs font-semibold">${config.label}</div>
+    </div>
+  `;
+}
+
+function displaySafetyScoreDetails(score) {
+  return `
+    <div class="bg-white border rounded p-3 space-y-2">
+      <h4 class="text-xs font-bold text-gray-900 mb-2">
+        <i class="fas fa-chart-pie text-blue-600 mr-1"></i>
+        안전 점수 세부사항
+      </h4>
+      
+      <div class="space-y-1">
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-gray-600">🔒 허가·정품성</span>
+          <div class="flex items-center gap-1">
+            <div class="w-20 bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full" style="width: ${(score.score_regulatory/35)*100}%"></div>
+            </div>
+            <span class="text-xs font-semibold text-gray-900">${score.score_regulatory}/35</span>
+          </div>
+        </div>
+        
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-gray-600">📊 근거·효과</span>
+          <div class="flex items-center gap-1">
+            <div class="w-20 bg-gray-200 rounded-full h-2">
+              <div class="bg-green-600 h-2 rounded-full" style="width: ${(score.score_efficacy/25)*100}%"></div>
+            </div>
+            <span class="text-xs font-semibold text-gray-900">${score.score_efficacy}/25</span>
+          </div>
+        </div>
+        
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-gray-600">⚕️ 안전성</span>
+          <div class="flex items-center gap-1">
+            <div class="w-20 bg-gray-200 rounded-full h-2">
+              <div class="bg-yellow-600 h-2 rounded-full" style="width: ${(score.score_safety/25)*100}%"></div>
+            </div>
+            <span class="text-xs font-semibold text-gray-900">${score.score_safety}/25</span>
+          </div>
+        </div>
+        
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-gray-600">🚚 유통·추적</span>
+          <div class="flex items-center gap-1">
+            <div class="w-20 bg-gray-200 rounded-full h-2">
+              <div class="bg-purple-600 h-2 rounded-full" style="width: ${(score.score_distribution/15)*100}%"></div>
+            </div>
+            <span class="text-xs font-semibold text-gray-900">${score.score_distribution}/15</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-3 pt-3 border-t text-xs text-gray-600">
+        <p><strong>💡 소비자 체크포인트:</strong></p>
+        <ul class="list-disc list-inside space-y-0.5 mt-1">
+          ${score.score_regulatory >= 30 ? '<li class="text-green-700">✓ 정부 허가 확인됨</li>' : '<li class="text-red-700">✗ 허가 상태 불명확</li>'}
+          ${score.score_efficacy >= 20 ? '<li class="text-green-700">✓ 임상 근거 충분</li>' : '<li class="text-yellow-700">△ 임상 근거 제한적</li>'}
+          ${score.score_safety >= 20 ? '<li class="text-green-700">✓ 부작용 정보 투명</li>' : '<li class="text-red-700">✗ 안전성 정보 부족</li>'}
+        </ul>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================================
+// Load and Display FAQs
+// ============================================================================
+
+async function loadFAQs(ingredientId = null) {
+  try {
+    let url = '/api/faqs';
+    if (ingredientId) {
+      url += `?ingredient=${ingredientId}`;
+    }
+    
+    const response = await axios.get(url);
+    const faqs = response.data.faqs;
+    
+    if (faqs.length === 0) {
+      return;
+    }
+    
+    const faqSection = document.getElementById('faqSection');
+    const faqList = document.getElementById('faqList');
+    
+    let html = '';
+    faqs.forEach((faq, index) => {
+      const categoryColors = {
+        general: 'blue',
+        efficacy: 'green',
+        safety: 'yellow',
+        usage: 'purple',
+        blacklist: 'red'
+      };
+      const color = categoryColors[faq.category] || 'gray';
+      
+      html += `
+        <div class="border rounded p-2 hover:shadow-sm transition cursor-pointer" onclick="toggleFAQ('faq-${index}')">
+          <div class="flex justify-between items-start">
+            <div class="flex-1">
+              <p class="text-xs font-semibold text-gray-900">${faq.question}</p>
+            </div>
+            <i class="fas fa-chevron-down text-gray-400 text-xs" id="faq-icon-${index}"></i>
+          </div>
+          <div id="faq-${index}" class="hidden mt-2 pt-2 border-t">
+            <p class="text-xs text-gray-700">${faq.answer}</p>
+          </div>
+        </div>
+      `;
+    });
+    
+    faqList.innerHTML = html;
+    faqSection.classList.remove('hidden');
+  } catch (error) {
+    console.error('Error loading FAQs:', error);
+  }
+}
+
+function toggleFAQ(faqId) {
+  const faqContent = document.getElementById(faqId);
+  const icon = document.getElementById(`${faqId}-icon`);
+  
+  if (faqContent.classList.contains('hidden')) {
+    faqContent.classList.remove('hidden');
+    icon.classList.remove('fa-chevron-down');
+    icon.classList.add('fa-chevron-up');
+  } else {
+    faqContent.classList.add('hidden');
+    icon.classList.remove('fa-chevron-up');
+    icon.classList.add('fa-chevron-down');
+  }
+}
+
+// Load general FAQs on page load
+window.addEventListener('DOMContentLoaded', () => {
+  loadFAQs();
+});

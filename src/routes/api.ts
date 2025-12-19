@@ -61,6 +61,97 @@ apiRoutes.get('/regulatory-bodies', async (c) => {
 });
 
 // ============================================================================
+// Safety Profiles & Scores
+// ============================================================================
+
+apiRoutes.get('/ingredients/:ingredientId/safety', async (c) => {
+  try {
+    const { DB } = c.env;
+    const ingredientId = c.req.param('ingredientId');
+    
+    const profile = await DB.prepare(`
+      SELECT * FROM safety_profiles WHERE ingredient_id = ?
+    `).bind(ingredientId).first();
+    
+    if (!profile) {
+      return c.json({ error: 'Safety profile not found' }, 404);
+    }
+    
+    // Parse JSON fields
+    return c.json({
+      ...profile,
+      common_side_effects: JSON.parse(profile.common_side_effects as string),
+      serious_side_effects: JSON.parse(profile.serious_side_effects as string),
+      contraindications: JSON.parse(profile.contraindications as string),
+      drug_interactions: JSON.parse(profile.drug_interactions as string),
+      withdrawal_symptoms: JSON.parse(profile.withdrawal_symptoms as string)
+    });
+  } catch (error: any) {
+    console.error('Error fetching safety profile:', error);
+    return c.json({ error: error.message }, 500);
+  }
+});
+
+apiRoutes.get('/products/:productId/safety-score', async (c) => {
+  try {
+    const { DB } = c.env;
+    const productId = c.req.param('productId');
+    const country = c.req.query('country') || 'KR';
+    
+    const score = await DB.prepare(`
+      SELECT * FROM safety_scores 
+      WHERE product_id = ? AND country_code = ?
+    `).bind(productId, country).first();
+    
+    if (!score) {
+      return c.json({ error: 'Safety score not found' }, 404);
+    }
+    
+    return c.json(score);
+  } catch (error: any) {
+    console.error('Error fetching safety score:', error);
+    return c.json({ error: error.message }, 500);
+  }
+});
+
+// ============================================================================
+// FAQs
+// ============================================================================
+
+apiRoutes.get('/faqs', async (c) => {
+  try {
+    const { DB } = c.env;
+    const category = c.req.query('category') || '';
+    const ingredientId = c.req.query('ingredient') || '';
+    
+    let query = 'SELECT * FROM faqs WHERE is_active = 1';
+    const params: any[] = [];
+    
+    if (category) {
+      query += ' AND category = ?';
+      params.push(category);
+    }
+    
+    if (ingredientId) {
+      query += ' AND (ingredient_id = ? OR ingredient_id IS NULL)';
+      params.push(ingredientId);
+    }
+    
+    query += ' ORDER BY display_order';
+    
+    const result = await DB.prepare(query).bind(...params).all();
+    
+    return c.json({
+      faqs: result.results || [],
+      total: result.results?.length || 0
+    });
+  } catch (error: any) {
+    console.error('Error fetching FAQs:', error);
+    return c.json({ error: error.message }, 500);
+  }
+});
+
+// ============================================================================
 // Product Search
 // ============================================================================
 
@@ -319,6 +410,17 @@ apiRoutes.post('/scan/barcode', async (c) => {
       SELECT * FROM blacklisted_ingredients 
       WHERE ingredient_id = ?
     `).bind(product.ingredient_id).first();
+
+    // Get safety profile
+    const safetyProfile = await DB.prepare(`
+      SELECT * FROM safety_profiles WHERE ingredient_id = ?
+    `).bind(product.ingredient_id).first();
+
+    // Get safety score
+    const safetyScore = await DB.prepare(`
+      SELECT * FROM safety_scores 
+      WHERE product_id = ? AND country_code = ?
+    `).bind(product.product_id, country).first();
 
     // Calculate risk
     const riskFactors = [];
