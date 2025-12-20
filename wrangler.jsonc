@@ -8,8 +8,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "dietmed-production",
-      "database_id": "local-only"
+      "database_name": "dietmed-global-production",
+      "database_id": "cf98bd7b-9ed5-4661-8855-5fd16e67c549"
     }
   ]
 }
