@@ -760,3 +760,30 @@ A: 월 1,000건까지 무료입니다. 간단 모드를 기본으로 사용하�
 - 간단 모드: 제품명 기반 검색
 - 고급 모드: 90%+ 텍스트 인식 정확도 (Google Vision API)
 
+
+---
+
+## 🔧 버그 수정 이력
+
+### v2.0.2 (2025-12-20)
+#### 긴급 수정: 중복 함수 노출 제거
+**문제**: 메인화면 공지·로그인·회원가입 버튼과 관리자 페이지 공지 등록 버튼이 간헐적으로 작동하지 않는 오류
+
+**원인**: `app.js`와 `admin.js`에서 동일한 함수를 `window` 객체에 중복으로 노출하여 함수가 덮어씌워지는 문제
+- `app.js`: `window.showLogin`, `window.showRegister` 등이 1476번 라인과 1651번 라인에 중복 노출
+- `admin.js`: `window.handleCreateNotice`, `window.loadNotices` 등이 232번 라인과 292번 라인에 중복 노출
+
+**해결**:
+1. `app.js` 중복 제거 (1476-1479 라인 삭제)
+2. `admin.js` 중복 제거 (232-234 라인 삭제)
+3. 파일 끝부분에 통합된 단일 노출만 유지
+
+**테스트**:
+- ✅ 메인화면 (`https://puke365.net/`): 공지, 로그인, 회원가입 버튼 정상 작동
+- ✅ 관리자 페이지 (`https://puke365.net/secret-admin-panel-xyz123`): 공지사항 등록 버튼 정상 작동
+
+**배포**:
+- Latest: `https://74390fe2.dietmed-global.pages.dev`
+- Production: `https://puke365.net/`
+- GitHub: `https://github.com/langsb16-collab/diet1234`
+
