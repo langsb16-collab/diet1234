@@ -229,13 +229,6 @@ async function handleCreateNotice(event) {
     }
   }
 }
-
-// 전역 함수로 명시적 노출
-window.loadUsers = loadUsers;
-window.upgradeUser = upgradeUser;
-window.deleteUser = deleteUser;
-window.showCreateNotice = showCreateNotice;
-window.handleImageUpload = handleImageUpload;
 window.handleCreateNotice = handleCreateNotice;
 window.loadNotices = loadNotices;
 window.deleteNotice = deleteNotice;
@@ -289,6 +282,16 @@ async function deleteNotice(noticeId) {
     alert('공지사항 삭제에 실패했습니다.');
   }
 }
+
+// 전역 함수로 명시적 노출 (인라인 onclick에서 호출 가능하도록)
+window.loadUsers = loadUsers;
+window.upgradeUser = upgradeUser;
+window.deleteUser = deleteUser;
+window.showCreateNotice = showCreateNotice;
+window.handleImageUpload = handleImageUpload;
+window.handleCreateNotice = handleCreateNotice;
+window.loadNotices = loadNotices;
+window.deleteNotice = deleteNotice;
 
 // 페이지 로드 시 통계 표시
 document.addEventListener('DOMContentLoaded', async () => {
