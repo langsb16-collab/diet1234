@@ -6,8 +6,13 @@
 
 const translations = {
   ko: {
-    hero_title: '안전한 다이어트 의약품 선택',
-    hero_subtitle: '바코드 스캔으로 즉시 확인하는<br>국가별 허가 상태 · 위조 위험 · 합법 구매처',
+    hero_title: '살 빼는 정보, 이제는 검증부터',
+    hero_subtitle: '정부 허가·성분·부작용까지 한 번에<br>국가별 허가 상태 · 위조 위험 · 합법 구매처',
+    search_slogan: '다이어트약, 먹기 전에 먼저 확인하세요',
+    scan_slogan: 'SNS 후기 대신 국가 허가 기준으로',
+    comparison_slogan: '광고가 아닌 허가로 비교합니다',
+    detail_slogan: '다이어트약의 진짜 정보를 공개합니다',
+    footer_slogan: '건강한 감량은 검증에서 시작됩니다',
     btn_scan: '스캔',
     btn_list: '목록',
     search_title: '제품 검색',
@@ -17,11 +22,11 @@ const translations = {
     barcode_placeholder: '바코드 번호 (예: 0169-4517-02)',
     btn_verify: '제품 확인',
     feature1_title: '허가 상태',
-    feature1_desc: '전세계 규제기관 실시간 정보',
-    feature2_title: '위조 탐지',
-    feature2_desc: 'AI 기반 위험 패턴 분석',
-    feature3_title: '합법 구매',
-    feature3_desc: '인증 약국만 연결',
+    feature1_desc: 'FDA·MFDS·EMA 기준',
+    feature2_title: '안전 검증',
+    feature2_desc: '불법·혼입 성분 차단',
+    feature3_title: '신뢰 정보',
+    feature3_desc: '허가된 정보만 제공',
     stats_title: '플랫폼 통계',
     stats1: '제품',
     stats2: '국가',
@@ -29,8 +34,13 @@ const translations = {
     stats4: '정확도'
   },
   en: {
-    hero_title: 'Safe Diet Medication Selection',
-    hero_subtitle: 'Instant verification via barcode scan<br>Approval status · Counterfeit risk · Legal purchase',
+    hero_title: 'Verify Before You Buy',
+    hero_subtitle: 'Government approvals, ingredients, side effects<br>Approval status · Counterfeit risk · Legal purchase',
+    search_slogan: 'Check Diet Pills Before Taking Them',
+    scan_slogan: 'Based on National Approval Standards, Not SNS Reviews',
+    comparison_slogan: 'Compare by Approval, Not by Ads',
+    detail_slogan: 'Real Information About Diet Pills',
+    footer_slogan: 'Healthy Weight Loss Starts with Verification',
     btn_scan: 'Scan',
     btn_list: 'List',
     search_title: 'Product Search',
@@ -40,11 +50,11 @@ const translations = {
     barcode_placeholder: 'Enter barcode (e.g., 0169-4517-02)',
     btn_verify: 'Verify Product',
     feature1_title: 'Approval Status',
-    feature1_desc: 'Real-time global regulatory info',
-    feature2_title: 'Counterfeit Detection',
-    feature2_desc: 'AI-based risk pattern analysis',
-    feature3_title: 'Legal Purchase',
-    feature3_desc: 'Certified pharmacies only',
+    feature1_desc: 'FDA·MFDS·EMA Standards',
+    feature2_title: 'Safety Verification',
+    feature2_desc: 'Block Illegal Ingredients',
+    feature3_title: 'Trusted Info',
+    feature3_desc: 'Only Approved Data',
     stats_title: 'Platform Statistics',
     stats1: 'Products',
     stats2: 'Countries',
@@ -52,8 +62,13 @@ const translations = {
     stats4: 'Accuracy'
   },
   zh: {
-    hero_title: '安全的减肥药物选择',
-    hero_subtitle: '通过条形码扫描即时验证<br>批准状态 · 假药风险 · 合法购买',
+    hero_title: '减肥信息，从验证开始',
+    hero_subtitle: '政府批准·成分·副作用一次性确认<br>批准状态 · 假药风险 · 合法购买',
+    search_slogan: '服用减肥药之前，请先确认',
+    scan_slogan: '基于国家批准标准，而非社交媒体评论',
+    comparison_slogan: '通过批准而非广告进行比较',
+    detail_slogan: '公开减肥药的真实信息',
+    footer_slogan: '健康减肥从验证开始',
     btn_scan: '扫描',
     btn_list: '列表',
     search_title: '产品搜索',
@@ -63,11 +78,11 @@ const translations = {
     barcode_placeholder: '输入条形码（例：0169-4517-02）',
     btn_verify: '验证产品',
     feature1_title: '批准状态',
-    feature1_desc: '全球监管机构实时信息',
-    feature2_title: '假药检测',
-    feature2_desc: '基于AI的风险模式分析',
-    feature3_title: '合法购买',
-    feature3_desc: '仅连接认证药店',
+    feature1_desc: 'FDA·MFDS·EMA标准',
+    feature2_title: '安全验证',
+    feature2_desc: '阻止非法成分',
+    feature3_title: '可信信息',
+    feature3_desc: '仅提供批准数据',
     stats_title: '平台统计',
     stats1: '产品',
     stats2: '国家',
@@ -75,8 +90,13 @@ const translations = {
     stats4: '准确度'
   },
   ja: {
-    hero_title: '安全なダイエット医薬品の選択',
-    hero_subtitle: 'バーコードスキャンで即座に確認<br>承認状況 · 偽造リスク · 合法購入',
+    hero_title: 'ダイエット情報、まず検証から',
+    hero_subtitle: '政府承認·成分·副作用を一度に確認<br>承認状況 · 偽造リスク · 合法購入',
+    search_slogan: 'ダイエット薬、服用前にまず確認',
+    scan_slogan: 'SNSレビューではなく国の承認基準で',
+    comparison_slogan: '広告ではなく承認で比較',
+    detail_slogan: 'ダイエット薬の本当の情報を公開',
+    footer_slogan: '健康的な減量は検証から始まります',
     btn_scan: 'スキャン',
     btn_list: 'リスト',
     search_title: '製品検索',
@@ -86,11 +106,11 @@ const translations = {
     barcode_placeholder: 'バーコードを入力（例：0169-4517-02）',
     btn_verify: '製品確認',
     feature1_title: '承認状況',
-    feature1_desc: '世界の規制当局のリアルタイム情報',
-    feature2_title: '偽造検出',
-    feature2_desc: 'AIベースのリスクパターン分析',
-    feature3_title: '合法購入',
-    feature3_desc: '認定薬局のみ接続',
+    feature1_desc: 'FDA·MFDS·EMA基準',
+    feature2_title: '安全検証',
+    feature2_desc: '違法成分をブロック',
+    feature3_title: '信頼情報',
+    feature3_desc: '承認データのみ提供',
     stats_title: 'プラットフォーム統計',
     stats1: '製品',
     stats2: '国',
@@ -784,14 +804,23 @@ async function compareProducts() {
 function displayComparison(data) {
   const resultsDiv = document.getElementById('results');
   
+  // Get current language
+  const currentLang = localStorage.getItem('language') || 'ko';
+  const slogan = translations[currentLang].comparison_slogan;
+  
   // Build comparison table
   let html = `
-    <div class="bg-white rounded-lg shadow-sm p-4">
+    <div class="card p-4">
+      <div class="bg-orange-50 border-l-4 border-orange-500 p-3 mb-4 rounded">
+        <p class="text-sm text-orange-800 font-semibold">
+          <i class="fas fa-balance-scale mr-2"></i>${slogan}
+        </p>
+      </div>
       <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-gray-900">
-          <i class="fas fa-balance-scale mr-2 text-orange-600"></i>제품 비교
+        <h3 class="text-lg font-bold text-orange-900">
+          <i class="fas fa-chart-line mr-2 text-orange-600"></i>제품 비교 분석
         </h3>
-        <button onclick="clearComparison()" class="text-sm text-gray-600 hover:text-gray-900">
+        <button onclick="clearComparison()" class="text-sm text-orange-600 hover:text-orange-900">
           <i class="fas fa-times mr-1"></i>닫기
         </button>
       </div>
@@ -949,5 +978,8 @@ function clearComparison() {
   // Uncheck all checkboxes
   document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
     cb.checked = false;
+  });
+}
+
   });
 }

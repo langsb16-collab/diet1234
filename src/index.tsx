@@ -209,6 +209,11 @@ app.get('/', (c) => {
 
             <!-- Quick Search -->
             <div id="searchSection" class="card compact-spacing">
+                <div class="bg-orange-50 border-l-4 border-orange-500 p-3 mb-3 rounded">
+                    <p class="text-sm text-orange-800 font-semibold" data-i18n="search_slogan">
+                        <i class="fas fa-shield-check mr-2"></i>다이어트약, 먹기 전에 먼저 확인하세요
+                    </p>
+                </div>
                 <h3 class="text-sm font-bold text-orange-900 mb-3">
                     <i class="fas fa-search text-orange-600 mr-2"></i>
                     <span data-i18n="search_title">제품 검색</span>
@@ -234,6 +239,11 @@ app.get('/', (c) => {
 
             <!-- Barcode Scan Section -->
             <div id="scanSection" class="card compact-spacing hidden">
+                <div class="bg-orange-50 border-l-4 border-orange-500 p-3 mb-3 rounded">
+                    <p class="text-sm text-orange-800 font-semibold" data-i18n="scan_slogan">
+                        <i class="fas fa-certificate mr-2"></i>SNS 후기 대신 국가 허가 기준으로
+                    </p>
+                </div>
                 <h3 class="text-sm font-bold text-orange-900 mb-3">
                     <i class="fas fa-barcode text-orange-600 mr-2"></i>
                     <span data-i18n="barcode_title">바코드 스캔</span>
@@ -341,6 +351,9 @@ app.get('/', (c) => {
         <!-- Footer -->
         <footer class="bg-gradient-to-r from-orange-800 to-orange-900 text-white mt-6 py-6">
             <div class="max-w-7xl mx-auto px-4 text-center">
+                <p class="text-lg font-bold text-white mb-2" data-i18n="footer_slogan">
+                    <i class="fas fa-check-circle mr-2"></i>건강한 감량은 검증에서 시작됩니다
+                </p>
                 <p class="text-sm text-orange-100 mb-3">
                     © 2024 DietMed Global. 본 플랫폼은 정보 제공 목적이며 의료행위를 대체하지 않습니다.
                 </p>
