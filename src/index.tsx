@@ -468,7 +468,7 @@ app.get('/', (c) => {
             </div>
 
             <!-- Features - 애플 스타일 -->
-            <div class="grid grid-cols-3 gap-3 mb-3">
+            <div id="featuresSection" class="grid grid-cols-3 gap-3 mb-3">
                 <div class="card p-4 compact-spacing">
                     <div class="text-2xl mb-2" style="color: #0B1C2D;">
                         <i class="fas fa-globe"></i>
@@ -499,7 +499,7 @@ app.get('/', (c) => {
             </div>
 
             <!-- Stats -->
-            <div class="card compact-spacing">
+            <div id="statsSection" class="card compact-spacing">
                 <h3 class="text-sm font-bold mb-3" style="color: #1C1C1E;">
                     <i class="fas fa-chart-bar mr-2" style="color: #0B1C2D;"></i>
                     <span data-i18n="stats_title">플랫폼 통계</span>
@@ -551,9 +551,14 @@ app.get('/', (c) => {
             
             <!-- Notice Section -->
             <div id="noticeSection" class="hidden card compact-spacing">
-                <h3 class="text-lg font-bold mb-4" style="color: #1C1C1E;">
-                    <i class="fas fa-bullhorn mr-2" style="color: #0B1C2D;"></i>공지사항
-                </h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold" style="color: #1C1C1E;">
+                        <i class="fas fa-bullhorn mr-2" style="color: #0B1C2D;"></i>공지사항
+                    </h3>
+                    <button onclick="closeNotices()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
                 <div id="noticeList" class="space-y-3"></div>
             </div>
             

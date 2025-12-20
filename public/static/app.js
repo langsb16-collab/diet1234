@@ -1559,6 +1559,12 @@ async function showNotices() {
     return;
   }
   
+  // Hide features and stats sections when showing notices
+  const featuresSection = document.getElementById('featuresSection');
+  const statsSection = document.getElementById('statsSection');
+  if (featuresSection) featuresSection.classList.add('hidden');
+  if (statsSection) statsSection.classList.add('hidden');
+  
   noticeSection.classList.remove('hidden');
   
   try {
@@ -1657,6 +1663,7 @@ window.handleLogin = handleLogin;
 window.handleRegister = handleRegister;
 window.logout = logout;
 window.showNotices = showNotices;
+window.closeNotices = closeNotices;
 window.showNoticeDetail = showNoticeDetail;
 window.closeNoticeDetail = closeNoticeDetail;
 
@@ -1708,3 +1715,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+
+// Close notices section
+function closeNotices() {
+  const noticeSection = document.getElementById('noticeSection');
+  const featuresSection = document.getElementById('featuresSection');
+  const statsSection = document.getElementById('statsSection');
+  
+  if (noticeSection) noticeSection.classList.add('hidden');
+  if (featuresSection) featuresSection.classList.remove('hidden');
+  if (statsSection) statsSection.classList.remove('hidden');
+}
