@@ -2,6 +2,8 @@
 
 export type Env = {
   DB: D1Database;
+  GOOGLE_VISION_API_KEY?: string;
+  MFDS_API_KEY?: string;
 };
 
 // ============================================================================

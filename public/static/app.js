@@ -448,11 +448,17 @@ async function searchByImage() {
     return;
   }
   
+  // 고급 모드 체크
+  const advancedMode = document.getElementById('advancedModeToggle')?.checked || false;
+  
   const resultsDiv = document.getElementById('searchResults');
   resultsDiv.innerHTML = `
     <div class="text-center py-12">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style="border-color: #0B1C2D;"></div>
-      <p style="color: #6E6E73;">이미지 분석 중...</p>
+      <p style="color: #6E6E73;">
+        ${advancedMode ? '🧠 AI 이미지 분석 중...' : '이미지 분석 중...'}
+      </p>
+      ${advancedMode ? '<p class="text-xs mt-2" style="color: #6E6E73;">Google Vision API로 텍스트를 추출하고 있습니다.</p>' : ''}
     </div>
   `;
   
@@ -460,6 +466,7 @@ async function searchByImage() {
     // FormData로 이미지 전송
     const formData = new FormData();
     formData.append('image', imageSearchFile);
+    formData.append('advanced', advancedMode.toString());
     
     const response = await axios.post('/api/search/image', formData, {
       headers: {
@@ -469,17 +476,58 @@ async function searchByImage() {
     
     const data = response.data;
     
+    // OCR 결과 표시 (고급 모드인 경우)
+    let ocrResultHtml = '';
+    if (advancedMode && data.ocr_result) {
+      const ocr = data.ocr_result;
+      ocrResultHtml = `
+        <div class="mb-4 p-3 rounded-lg" style="background: rgba(11, 28, 45, 0.05); border-left: 3px solid #0B1C2D;">
+          <p class="text-xs font-bold mb-2" style="color: #1C1C1E;">
+            <i class="fas fa-brain mr-1" style="color: #0B1C2D;"></i>
+            AI 분석 결과 (Google Vision API)
+          </p>
+          ${ocr.detected_text ? `
+            <div class="mb-2">
+              <p class="text-xs font-semibold" style="color: #6E6E73;">인식된 텍스트:</p>
+              <p class="text-xs mt-1 p-2 rounded" style="background: white; color: #1C1C1E; font-family: monospace;">
+                ${ocr.detected_text.substring(0, 200)}${ocr.detected_text.length > 200 ? '...' : ''}
+              </p>
+            </div>
+          ` : ''}
+          ${ocr.extracted_terms && ocr.extracted_terms.length > 0 ? `
+            <div>
+              <p class="text-xs font-semibold" style="color: #6E6E73;">추출된 키워드:</p>
+              <div class="flex flex-wrap gap-1 mt-1">
+                ${ocr.extracted_terms.map(term => `
+                  <span class="text-xs px-2 py-1 rounded" style="background: #0B1C2D; color: white;">
+                    ${term}
+                  </span>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+          ${ocr.confidence ? `
+            <p class="text-xs mt-2" style="color: #6E6E73;">
+              신뢰도: ${(ocr.confidence * 100).toFixed(1)}%
+            </p>
+          ` : ''}
+        </div>
+      `;
+    }
+    
     if (data.success && data.products && data.products.length > 0) {
+      resultsDiv.innerHTML = ocrResultHtml;
       displaySearchResults({
         products: data.products,
         total: data.products.length
       });
     } else {
-      resultsDiv.innerHTML = `
+      resultsDiv.innerHTML = ocrResultHtml + `
         <div class="text-center py-8" style="color: #6E6E73;">
           <i class="fas fa-image text-4xl mb-4"></i>
           <p>이미지에서 제품을 찾을 수 없습니다.</p>
           <p class="text-sm mt-2">다른 이미지로 시도해보세요.</p>
+          ${advancedMode ? '<p class="text-xs mt-2">고급 모드가 활성화되었지만 제품을 찾지 못했습니다.</p>' : ''}
         </div>
       `;
     }
@@ -492,7 +540,8 @@ async function searchByImage() {
       <div class="text-center py-8 text-red-600">
         <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
         <p>이미지 검색에 실패했습니다.</p>
-        <p class="text-sm mt-2">다시 시도해주세요.</p>
+        <p class="text-sm mt-2">${error.response?.data?.error || '다시 시도해주세요.'}</p>
+        ${advancedMode ? '<p class="text-xs mt-2">Google Vision API 연동 오류일 수 있습니다.</p>' : ''}
       </div>
     `;
   }
@@ -1625,5 +1674,19 @@ axios.interceptors.response.use(response => response, error => {
 // 페이지 로드 시 인증 상태 확인
 document.addEventListener('DOMContentLoaded', () => {
   updateAuthUI();
+  
+  // 고급 모드 토글 이벤트
+  const advancedToggle = document.getElementById('advancedModeToggle');
+  const advancedInfo = document.getElementById('advancedModeInfo');
+  
+  if (advancedToggle && advancedInfo) {
+    advancedToggle.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        advancedInfo.classList.remove('hidden');
+      } else {
+        advancedInfo.classList.add('hidden');
+      }
+    });
+  }
 });
 

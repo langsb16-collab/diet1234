@@ -381,10 +381,18 @@ app.get('/', (c) => {
                 
                 <!-- 이미지 검색 -->
                 <div class="p-3 rounded-lg mb-3" style="background: rgba(11, 28, 45, 0.03); border: 1px dashed #E5E5EA;">
-                    <p class="text-xs font-semibold mb-2" style="color: #1C1C1E;">
-                        <i class="fas fa-camera mr-1" style="color: #0B1C2D;"></i>
-                        사진으로 제품 찾기
-                    </p>
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-semibold" style="color: #1C1C1E;">
+                            <i class="fas fa-camera mr-1" style="color: #0B1C2D;"></i>
+                            사진으로 제품 찾기
+                        </p>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="advancedModeToggle" class="mr-1" style="width: 14px; height: 14px;">
+                            <span class="text-xs" style="color: #6E6E73;" title="Google Vision API로 정확한 OCR 수행">
+                                <i class="fas fa-brain mr-1" style="color: #0B1C2D;"></i>고급
+                            </span>
+                        </label>
+                    </div>
                     <div class="flex space-x-2">
                         <label class="flex-1 cursor-pointer">
                             <div class="flex items-center justify-center px-3 py-2 rounded-lg text-xs font-medium transition" style="background: #FFFFFF; border: 1px solid #E5E5EA; color: #1C1C1E;">
@@ -409,6 +417,10 @@ app.get('/', (c) => {
                     >
                         <i class="fas fa-search mr-1"></i>이미지로 검색
                     </button>
+                    <div id="advancedModeInfo" class="hidden mt-2 p-2 rounded text-xs" style="background: rgba(11, 28, 45, 0.05); color: #6E6E73;">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        고급 모드: Google Vision API로 알약 이미지에서 텍스트, NDC 코드, 제조사명을 자동 인식합니다.
+                    </div>
                 </div>
                 
                 <div id="searchResults" class="mt-4"></div>

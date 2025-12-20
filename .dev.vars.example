@@ -1,0 +1,7 @@
+# Google Vision API Key (선택사항)
+# 고급 이미지 인식 기능을 사용하려면 Google Cloud Console에서 API 키를 발급받으세요.
+# https://console.cloud.google.com/apis/credentials
+GOOGLE_VISION_API_KEY=your_google_vision_api_key_here
+
+# MFDS API Key (선택사항)
+MFDS_API_KEY=your_mfds_api_key_here

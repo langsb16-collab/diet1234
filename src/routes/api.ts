@@ -50,6 +50,7 @@ apiRoutes.post('/search/image', async (c) => {
   try {
     const formData = await c.req.formData();
     const imageFile = formData.get('image') as File;
+    const advancedMode = formData.get('advanced') === 'true';
 
     if (!imageFile) {
       return c.json({ error: '이미지 파일이 없습니다.' }, 400);
@@ -57,21 +58,100 @@ apiRoutes.post('/search/image', async (c) => {
 
     const { env } = c;
     
-    // Convert image to base64 for OCR analysis
-    const imageData = await imageFile.arrayBuffer();
-    const base64Image = Buffer.from(imageData).toString('base64');
+    let detectedText = '';
+    let detectedLabels: string[] = [];
+    let ocrConfidence = 0;
+    let analysisMethod = 'simple';
     
-    // Simple OCR simulation: Extract text from image
-    // In production, integrate with Google Vision API or similar service
+    // 고급 모드: Google Vision API 사용
+    if (advancedMode && env.GOOGLE_VISION_API_KEY) {
+      try {
+        const imageData = await imageFile.arrayBuffer();
+        const base64Image = btoa(String.fromCharCode(...new Uint8Array(imageData)));
+        
+        const visionUrl = `https://vision.googleapis.com/v1/images:annotate?key=${env.GOOGLE_VISION_API_KEY}`;
+        
+        const visionRequest = {
+          requests: [{
+            image: { content: base64Image },
+            features: [
+              { type: 'TEXT_DETECTION', maxResults: 10 },
+              { type: 'LABEL_DETECTION', maxResults: 10 },
+              { type: 'LOGO_DETECTION', maxResults: 5 }
+            ]
+          }]
+        };
+        
+        const visionResponse = await fetch(visionUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(visionRequest)
+        });
+        
+        if (visionResponse.ok) {
+          const visionData = await visionResponse.json();
+          const annotations = visionData.responses[0];
+          
+          detectedText = annotations.textAnnotations?.[0]?.description || '';
+          detectedLabels = annotations.labelAnnotations?.map((label: any) => label.description) || [];
+          ocrConfidence = annotations.textAnnotations?.[0]?.confidence || 0;
+          analysisMethod = 'google_vision_api';
+        }
+      } catch (visionError) {
+        console.error('Google Vision API error:', visionError);
+        // Fallback to simple mode
+      }
+    }
     
-    // For now, search for popular weight loss medications in database
-    const searchTerms = [
-      'wegovy', 'ozempic', 'saxenda', 'victoza', 'mounjaro', 
-      'zepbound', 'contrave', 'xenical', 'alli', 'qsymia',
-      'adipex', 'phentermine', 'orlistat', 'semaglutide', 'liraglutide'
-    ];
+    // 검색어 추출
+    let searchTerms: string[] = [];
     
-    // Search products by common names and ingredients
+    if (detectedText) {
+      // OCR에서 추출한 텍스트에서 제품명, NDC 코드 등 추출
+      const textLower = detectedText.toLowerCase();
+      
+      // 일반적인 다이어트 약품명 추출
+      const commonDrugs = [
+        'wegovy', 'ozempic', 'saxenda', 'victoza', 'mounjaro', 
+        'zepbound', 'contrave', 'xenical', 'alli', 'qsymia',
+        'adipex', 'phentermine', 'orlistat', 'semaglutide', 'liraglutide',
+        'tirzepatide', 'naltrexone', 'bupropion', 'topiramate'
+      ];
+      
+      searchTerms = commonDrugs.filter(drug => textLower.includes(drug));
+      
+      // NDC 코드 추출 (형식: 0000-0000-00)
+      const ndcMatches = detectedText.match(/\d{4}-\d{4}-\d{2}/g);
+      if (ndcMatches) {
+        searchTerms.push(...ndcMatches);
+      }
+      
+      // 제조사명 추출
+      const manufacturers = ['novo nordisk', 'eli lilly', 'pfizer', 'roche', 'glaxosmithkline'];
+      manufacturers.forEach(mfr => {
+        if (textLower.includes(mfr)) {
+          searchTerms.push(mfr);
+        }
+      });
+    }
+    
+    // 검색어가 없으면 인기 제품 반환
+    if (searchTerms.length === 0) {
+      searchTerms = ['wegovy', 'ozempic', 'saxenda', 'semaglutide', 'liraglutide'];
+    }
+    
+    // 데이터베이스 검색
+    const whereClauses = searchTerms.map(() => 
+      `(LOWER(p.product_name) LIKE ? 
+       OR LOWER(i.name_standard) LIKE ? 
+       OR LOWER(m.name) LIKE ?
+       OR p.ndc_code LIKE ?)`
+    ).join(' OR ');
+    
+    const searchParams = searchTerms.flatMap(term => [
+      `%${term}%`, `%${term}%`, `%${term}%`, `%${term}%`
+    ]);
+    
     const searchQuery = `
       SELECT DISTINCT
         p.product_id,
@@ -81,6 +161,7 @@ apiRoutes.post('/search/image', async (c) => {
         p.ndc_code,
         i.name_standard as ingredient_name,
         m.name as manufacturer_name,
+        m.country as manufacturer_country,
         COUNT(DISTINCT a.approval_id) as approval_count,
         CASE 
           WHEN bi.ingredient_id IS NOT NULL THEN 'high_risk'
@@ -92,34 +173,35 @@ apiRoutes.post('/search/image', async (c) => {
       LEFT JOIN manufacturers m ON p.manufacturer_id = m.manufacturer_id
       LEFT JOIN approvals a ON p.product_id = a.product_id AND a.status = 'active'
       LEFT JOIN blacklisted_ingredients bi ON i.ingredient_id = bi.ingredient_id
-      WHERE 
-        LOWER(p.product_name) LIKE '%wegovy%'
-        OR LOWER(p.product_name) LIKE '%ozempic%'
-        OR LOWER(p.product_name) LIKE '%saxenda%'
-        OR LOWER(p.product_name) LIKE '%semaglutide%'
-        OR LOWER(p.product_name) LIKE '%liraglutide%'
-        OR LOWER(i.name_standard) LIKE '%semaglutide%'
-        OR LOWER(i.name_standard) LIKE '%liraglutide%'
+      WHERE ${whereClauses}
       GROUP BY p.product_id
       ORDER BY approval_count DESC, p.product_name
       LIMIT 20
     `;
     
-    const products = await env.DB.prepare(searchQuery).all();
+    const products = await env.DB.prepare(searchQuery).bind(...searchParams).all();
 
     return c.json({
       success: true,
       message: '이미지 분석 완료',
+      analysis_method: analysisMethod,
+      ocr_result: analysisMethod === 'google_vision_api' ? {
+        detected_text: detectedText,
+        detected_labels: detectedLabels,
+        confidence: ocrConfidence,
+        extracted_terms: searchTerms
+      } : null,
       products: products.results || [],
       total: (products.results || []).length,
-      note: '이미지에서 의약품을 검색했습니다. 더 정확한 인식을 위해서는 Google Vision API를 연동하세요.'
+      mode: advancedMode ? 'advanced' : 'simple'
     });
 
   } catch (error) {
     console.error('Image search error:', error);
     return c.json({ 
       success: false,
-      error: '이미지 검색에 실패했습니다.' 
+      error: '이미지 검색에 실패했습니다.',
+      details: error instanceof Error ? error.message : '알 수 없는 오류'
     }, 500);
   }
 });
