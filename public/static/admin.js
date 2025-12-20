@@ -86,7 +86,7 @@ function showCreateNotice() {
   const content = document.getElementById('adminContent');
   content.innerHTML = `
     <h3 class="text-xl font-bold text-gray-900 mb-4">공지사항 등록</h3>
-    <form onsubmit="handleCreateNotice(event)" class="space-y-4">
+    <form onsubmit="handleCreateNotice(event)" class="space-y-4" enctype="multipart/form-data">
       <div>
         <label class="block text-sm font-bold text-gray-700 mb-2">제목</label>
         <input type="text" name="title" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
@@ -96,9 +96,26 @@ function showCreateNotice() {
         <textarea name="content" required rows="10" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none"></textarea>
       </div>
       <div>
-        <label class="block text-sm font-bold text-gray-700 mb-2">이미지 URL (선택)</label>
-        <input type="url" name="image_url" placeholder="https://example.com/image.jpg" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
-        <p class="text-xs text-gray-500 mt-1">PC에서 이미지를 업로드하려면 먼저 이미지를 호스팅하고 URL을 입력하세요.</p>
+        <label class="block text-sm font-bold text-gray-700 mb-2">
+          <i class="fas fa-image mr-2 text-orange-600"></i>이미지 URL (선택)
+        </label>
+        <input type="url" id="image_url_input" name="image_url" placeholder="https://example.com/image.jpg" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none mb-2">
+        <div class="text-center my-3 text-gray-500">또는</div>
+        <label class="block">
+          <div class="flex items-center justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-lg appearance-none cursor-pointer hover:border-orange-400 focus:outline-none">
+            <span class="flex items-center space-x-2">
+              <i class="fas fa-upload text-orange-600"></i>
+              <span class="font-medium text-gray-600">
+                PC에서 이미지 업로드
+              </span>
+            </span>
+            <input type="file" name="image_file" id="image_file" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+          </div>
+        </label>
+        <p class="text-xs text-gray-500 mt-2" id="upload_status">JPG, PNG, GIF 형식 지원 (최대 5MB)</p>
+        <div id="image_preview" class="mt-3 hidden">
+          <img id="preview_img" src="" alt="미리보기" class="max-w-full h-auto rounded-lg border border-gray-300">
+        </div>
       </div>
       <div>
         <label class="flex items-center">
@@ -113,20 +130,80 @@ function showCreateNotice() {
   `;
 }
 
+// 이미지 업로드 처리
+let uploadedImageUrl = '';
+
+async function handleImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // 파일 크기 체크 (5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    alert('이미지 크기는 5MB를 초과할 수 없습니다.');
+    event.target.value = '';
+    return;
+  }
+
+  // 파일 타입 체크
+  if (!file.type.startsWith('image/')) {
+    alert('이미지 파일만 업로드 가능합니다.');
+    event.target.value = '';
+    return;
+  }
+
+  const uploadStatus = document.getElementById('upload_status');
+  uploadStatus.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>업로드 중...';
+
+  try {
+    // FormData로 파일 전송
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await axios.post('/api/admin/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    if (response.data.success) {
+      uploadedImageUrl = response.data.image_url;
+      
+      // URL 입력란에 자동 입력
+      document.getElementById('image_url_input').value = uploadedImageUrl;
+      
+      // 미리보기 표시
+      const preview = document.getElementById('image_preview');
+      const previewImg = document.getElementById('preview_img');
+      previewImg.src = uploadedImageUrl;
+      preview.classList.remove('hidden');
+      
+      uploadStatus.innerHTML = '<i class="fas fa-check-circle text-green-600 mr-2"></i>업로드 완료!';
+    }
+  } catch (error) {
+    console.error('Upload error:', error);
+    uploadStatus.innerHTML = '<i class="fas fa-exclamation-circle text-red-600 mr-2"></i>업로드 실패. 다시 시도해주세요.';
+    event.target.value = '';
+  }
+}
+
 async function handleCreateNotice(event) {
   event.preventDefault();
   const form = event.target;
   const formData = new FormData(form);
   
+  // 업로드된 이미지 URL 우선 사용
+  const imageUrl = uploadedImageUrl || formData.get('image_url') || null;
+  
   try {
     await axios.post('/api/admin/notices', {
       title: formData.get('title'),
       content: formData.get('content'),
-      image_url: formData.get('image_url') || null,
+      image_url: imageUrl,
       is_published: formData.get('is_published') ? 1 : 0
     });
     
     alert('공지사항이 등록되었습니다.');
+    uploadedImageUrl = ''; // 초기화
     loadNotices();
   } catch (error) {
     alert('공지사항 등록에 실패했습니다.');

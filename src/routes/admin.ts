@@ -243,15 +243,66 @@ admin.delete('/notices/:noticeId', async (c) => {
   return c.json({ success: true, message: '공지사항이 삭제되었습니다.' });
 });
 
-// 이미지 업로드 엔드포인트 (Cloudflare R2 사용 예정)
+// 이미지 업로드 엔드포인트 (Imgur API 사용)
 admin.post('/upload', async (c) => {
-  // R2 바인딩이 필요함 (wrangler.jsonc에 설정)
-  // 현재는 간단한 응답만 반환
-  return c.json({ 
-    success: true, 
-    message: '이미지 업로드 기능은 R2 설정 후 사용 가능합니다.',
-    image_url: 'https://placehold.co/600x400' 
-  });
+  try {
+    const formData = await c.req.formData();
+    const imageFile = formData.get('image') as File;
+
+    if (!imageFile) {
+      return c.json({ error: '이미지 파일이 없습니다.' }, 400);
+    }
+
+    // 파일 크기 체크 (5MB)
+    if (imageFile.size > 5 * 1024 * 1024) {
+      return c.json({ error: '이미지 크기는 5MB를 초과할 수 없습니다.' }, 400);
+    }
+
+    // 파일 타입 체크
+    if (!imageFile.type.startsWith('image/')) {
+      return c.json({ error: '이미지 파일만 업로드 가능합니다.' }, 400);
+    }
+
+    // ArrayBuffer로 변환
+    const arrayBuffer = await imageFile.arrayBuffer();
+    const base64Image = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+
+    // Imgur API로 업로드 (Anonymous upload)
+    const imgurResponse = await fetch('https://api.imgur.com/3/image', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Client-ID 546c25a59c58ad7', // Imgur anonymous client ID
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        image: base64Image,
+        type: 'base64'
+      })
+    });
+
+    if (!imgurResponse.ok) {
+      throw new Error('Imgur upload failed');
+    }
+
+    const imgurData = await imgurResponse.json() as any;
+    
+    if (imgurData.success && imgurData.data && imgurData.data.link) {
+      return c.json({
+        success: true,
+        image_url: imgurData.data.link,
+        message: '이미지 업로드 완료'
+      });
+    } else {
+      throw new Error('Invalid Imgur response');
+    }
+
+  } catch (error) {
+    console.error('Upload error:', error);
+    return c.json({ 
+      success: false, 
+      error: '이미지 업로드에 실패했습니다. 다시 시도해주세요.' 
+    }, 500);
+  }
 });
 
 // 통계
