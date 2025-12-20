@@ -308,13 +308,36 @@ window.addEventListener('DOMContentLoaded', () => {
 // Toggle sections
 // ============================================================================
 
+// 스캔 버튼 클릭 - 바코드 스캔 섹션 표시
 document.getElementById('scanBtn')?.addEventListener('click', () => {
-  document.getElementById('scanSection').classList.remove('hidden');
-  document.getElementById('scanSection').scrollIntoView({ behavior: 'smooth' });
+  const scanSection = document.getElementById('scanSection');
+  scanSection.classList.remove('hidden');
+  scanSection.scrollIntoView({ behavior: 'smooth' });
+  
+  // 바코드 입력란에 포커스
+  setTimeout(() => {
+    document.getElementById('barcodeInput')?.focus();
+  }, 300);
 });
 
+// 검색 버튼 클릭 - 검색 섹션으로 스크롤
 document.getElementById('searchBtn')?.addEventListener('click', () => {
-  document.getElementById('searchSection').scrollIntoView({ behavior: 'smooth' });
+  const searchSection = document.getElementById('searchSection');
+  searchSection.scrollIntoView({ behavior: 'smooth' });
+  
+  // 검색 입력란에 포커스
+  setTimeout(() => {
+    document.getElementById('searchInput')?.focus();
+  }, 300);
+});
+
+// 목록 버튼 클릭 - 전체 제품 목록 표시
+document.getElementById('listBtn')?.addEventListener('click', async () => {
+  const searchSection = document.getElementById('searchSection');
+  searchSection.scrollIntoView({ behavior: 'smooth' });
+  
+  // 전체 제품 목록 로드
+  await loadAllProducts();
 });
 
 // Enter key handlers
@@ -334,13 +357,154 @@ document.getElementById('barcodeInput')?.addEventListener('keypress', (e) => {
 // Product Search
 // ============================================================================
 
+// 전체 제품 목록 로드
+async function loadAllProducts() {
+  const resultsDiv = document.getElementById('searchResults');
+  
+  resultsDiv.innerHTML = `
+    <div class="text-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style="border-color: #0B1C2D;"></div>
+      <p style="color: #6E6E73;">전체 제품을 불러오는 중...</p>
+    </div>
+  `;
+  
+  try {
+    const response = await axios.get('/api/products?limit=50');
+    const data = response.data;
+    
+    if (data.products.length === 0) {
+      resultsDiv.innerHTML = `
+        <div class="text-center py-8" style="color: #6E6E73;">
+          <i class="fas fa-info-circle text-4xl mb-4"></i>
+          <p>등록된 제품이 없습니다.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    displaySearchResults(data);
+  } catch (error) {
+    console.error('Load all products error:', error);
+    resultsDiv.innerHTML = `
+      <div class="text-center py-8 text-red-600">
+        <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+        <p>제품 목록을 불러오는데 실패했습니다.</p>
+      </div>
+    `;
+  }
+}
+
+// 이미지 검색 전역 변수
+let imageSearchFile = null;
+
+// 이미지 파일 선택 처리
+function handleImageSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  // 파일 타입 체크
+  if (!file.type.startsWith('image/')) {
+    alert('이미지 파일만 선택 가능합니다.');
+    event.target.value = '';
+    return;
+  }
+  
+  // 파일 크기 체크 (10MB)
+  if (file.size > 10 * 1024 * 1024) {
+    alert('이미지 크기는 10MB를 초과할 수 없습니다.');
+    event.target.value = '';
+    return;
+  }
+  
+  imageSearchFile = file;
+  
+  // 미리보기 표시
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const preview = document.getElementById('imageSearchPreview');
+    preview.innerHTML = `
+      <div class="relative">
+        <img src="${e.target.result}" alt="검색 이미지" class="max-w-full h-32 rounded-lg mx-auto border" style="border-color: #E5E5EA;">
+        <button onclick="clearImageSearch()" class="absolute top-2 right-2 text-white px-2 py-1 rounded-full text-xs" style="background: #0B1C2D;">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    `;
+  };
+  reader.readAsDataURL(file);
+}
+
+// 이미지 검색 초기화
+function clearImageSearch() {
+  imageSearchFile = null;
+  document.getElementById('imageSearchInput').value = '';
+  document.getElementById('imageSearchPreview').innerHTML = '';
+}
+
+// 이미지로 제품 검색
+async function searchByImage() {
+  if (!imageSearchFile) {
+    alert('이미지를 선택해주세요.');
+    return;
+  }
+  
+  const resultsDiv = document.getElementById('searchResults');
+  resultsDiv.innerHTML = `
+    <div class="text-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style="border-color: #0B1C2D;"></div>
+      <p style="color: #6E6E73;">이미지 분석 중...</p>
+    </div>
+  `;
+  
+  try {
+    // FormData로 이미지 전송
+    const formData = new FormData();
+    formData.append('image', imageSearchFile);
+    
+    const response = await axios.post('/api/search/image', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    
+    const data = response.data;
+    
+    if (data.success && data.products && data.products.length > 0) {
+      displaySearchResults({
+        products: data.products,
+        total: data.products.length
+      });
+    } else {
+      resultsDiv.innerHTML = `
+        <div class="text-center py-8" style="color: #6E6E73;">
+          <i class="fas fa-image text-4xl mb-4"></i>
+          <p>이미지에서 제품을 찾을 수 없습니다.</p>
+          <p class="text-sm mt-2">다른 이미지로 시도해보세요.</p>
+        </div>
+      `;
+    }
+    
+    // 이미지 검색 후 초기화
+    clearImageSearch();
+  } catch (error) {
+    console.error('Image search error:', error);
+    resultsDiv.innerHTML = `
+      <div class="text-center py-8 text-red-600">
+        <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+        <p>이미지 검색에 실패했습니다.</p>
+        <p class="text-sm mt-2">다시 시도해주세요.</p>
+      </div>
+    `;
+  }
+}
+
 async function searchProducts() {
   const query = document.getElementById('searchInput').value.trim();
   const resultsDiv = document.getElementById('searchResults');
   
   if (!query || query.length < 2) {
     resultsDiv.innerHTML = `
-      <div class="text-center py-8 text-gray-500">
+      <div class="text-center py-8" style="color: #6E6E73;">
         <i class="fas fa-search text-4xl mb-4"></i>
         <p>검색어를 2자 이상 입력해주세요.</p>
       </div>
@@ -350,8 +514,8 @@ async function searchProducts() {
   
   resultsDiv.innerHTML = `
     <div class="text-center py-12">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
-      <p class="text-gray-600">검색 중...</p>
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style="border-color: #0B1C2D;"></div>
+      <p style="color: #6E6E73;">검색 중...</p>
     </div>
   `;
   
@@ -361,7 +525,7 @@ async function searchProducts() {
     
     if (data.products.length === 0) {
       resultsDiv.innerHTML = `
-        <div class="text-center py-8 text-gray-500">
+        <div class="text-center py-8" style="color: #6E6E73;">
           <i class="fas fa-info-circle text-4xl mb-4"></i>
           <p>검색 결과가 없습니다.</p>
           <p class="text-sm mt-2">다른 검색어로 시도해보세요.</p>
@@ -370,15 +534,31 @@ async function searchProducts() {
       return;
     }
     
-    let html = `
-      <div class="mb-4 flex justify-between items-center">
-        <p class="text-gray-700"><span class="font-bold">${data.total}</span>개의 제품을 찾았습니다.</p>
-        <p class="text-xs text-gray-600">제품을 선택하여 비교하세요</p>
+    displaySearchResults(data);
+  } catch (error) {
+    console.error('Search error:', error);
+    resultsDiv.innerHTML = `
+      <div class="text-center py-8 text-red-600">
+        <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+        <p>검색에 실패했습니다. 다시 시도해주세요.</p>
       </div>
-      <div class="space-y-4">
     `;
-    
-    data.products.forEach(product => {
+  }
+}
+
+// 검색 결과 표시 함수 (공통)
+function displaySearchResults(data) {
+  const resultsDiv = document.getElementById('searchResults');
+  
+  let html = `
+    <div class="mb-4 flex justify-between items-center">
+      <p style="color: #1C1C1E;"><span class="font-bold">${data.total || data.products.length}</span>개의 제품을 찾았습니다.</p>
+      <p class="text-xs" style="color: #6E6E73;">제품을 선택하여 비교하세요</p>
+    </div>
+    <div class="space-y-4">
+  `;
+  
+  data.products.forEach(product => {
       const riskBadge = getRiskBadge(product.risk_level);
       const isSelected = selectedProducts.includes(product.product_id);
       html += `

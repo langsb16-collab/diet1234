@@ -344,7 +344,9 @@ app.get('/', (c) => {
                     <i class="fas fa-search mr-2" style="color: #0B1C2D;"></i>
                     <span data-i18n="search_title">제품 검색</span>
                 </h3>
-                <div class="flex space-x-2">
+                
+                <!-- 텍스트 검색 -->
+                <div class="flex space-x-2 mb-3">
                     <input 
                         type="text" 
                         id="searchInput"
@@ -360,6 +362,39 @@ app.get('/', (c) => {
                         검색
                     </button>
                 </div>
+                
+                <!-- 이미지 검색 -->
+                <div class="p-3 rounded-lg mb-3" style="background: rgba(11, 28, 45, 0.03); border: 1px dashed #E5E5EA;">
+                    <p class="text-xs font-semibold mb-2" style="color: #1C1C1E;">
+                        <i class="fas fa-camera mr-1" style="color: #0B1C2D;"></i>
+                        사진으로 제품 찾기
+                    </p>
+                    <div class="flex space-x-2">
+                        <label class="flex-1 cursor-pointer">
+                            <div class="flex items-center justify-center px-3 py-2 rounded-lg text-xs font-medium transition" style="background: #FFFFFF; border: 1px solid #E5E5EA; color: #1C1C1E;">
+                                <i class="fas fa-image mr-2" style="color: #0B1C2D;"></i>
+                                갤러리에서 선택
+                            </div>
+                            <input type="file" id="imageSearchInput" accept="image/*" onchange="handleImageSelect(event)" class="hidden">
+                        </label>
+                        <label class="flex-1 cursor-pointer">
+                            <div class="flex items-center justify-center px-3 py-2 rounded-lg text-xs font-medium transition" style="background: #FFFFFF; border: 1px solid #E5E5EA; color: #1C1C1E;">
+                                <i class="fas fa-camera mr-2" style="color: #0B1C2D;"></i>
+                                카메라 촬영
+                            </div>
+                            <input type="file" accept="image/*" capture="environment" onchange="handleImageSelect(event)" class="hidden">
+                        </label>
+                    </div>
+                    <div id="imageSearchPreview" class="mt-2"></div>
+                    <button 
+                        onclick="searchByImage()"
+                        class="w-full mt-2 px-3 py-2 rounded-lg text-xs font-semibold transition"
+                        style="background: #0B1C2D; color: white;"
+                    >
+                        <i class="fas fa-search mr-1"></i>이미지로 검색
+                    </button>
+                </div>
+                
                 <div id="searchResults" class="mt-4"></div>
             </div>
 

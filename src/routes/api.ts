@@ -43,6 +43,60 @@ apiRoutes.get('/health', (c) => {
 });
 
 // ============================================================================
+// Image Search
+// ============================================================================
+
+apiRoutes.post('/search/image', async (c) => {
+  try {
+    const formData = await c.req.formData();
+    const imageFile = formData.get('image') as File;
+
+    if (!imageFile) {
+      return c.json({ error: '이미지 파일이 없습니다.' }, 400);
+    }
+
+    // 간단한 구현: 이미지 업로드 시 전체 제품 목록 반환
+    // 실제로는 이미지 인식 API (Google Vision, AWS Rekognition 등) 사용
+    const { env } = c;
+    
+    const products = await env.DB.prepare(`
+      SELECT 
+        p.product_id,
+        p.product_name,
+        p.ndc_code,
+        i.ingredient_name,
+        COUNT(DISTINCT a.approval_id) as approval_count,
+        CASE 
+          WHEN bi.ingredient_id IS NOT NULL THEN 'high_risk'
+          WHEN p.requires_refrigeration = 1 THEN 'caution'
+          ELSE 'safe'
+        END as risk_level
+      FROM products p
+      LEFT JOIN ingredients i ON p.ingredient_id = i.ingredient_id
+      LEFT JOIN approvals a ON p.product_id = a.product_id AND a.status = 'active'
+      LEFT JOIN blacklisted_ingredients bi ON i.ingredient_id = bi.ingredient_id
+      GROUP BY p.product_id
+      ORDER BY approval_count DESC
+      LIMIT 10
+    `).all();
+
+    return c.json({
+      success: true,
+      message: '이미지 분석 완료 (데모 모드)',
+      products: products.results,
+      note: '실제 프로덕션에서는 이미지 인식 API를 연동하여 정확한 제품을 찾아드립니다.'
+    });
+
+  } catch (error) {
+    console.error('Image search error:', error);
+    return c.json({ 
+      success: false,
+      error: '이미지 검색에 실패했습니다.' 
+    }, 500);
+  }
+});
+
+// ============================================================================
 // Regulatory Bodies
 // ============================================================================
 
