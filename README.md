@@ -538,3 +538,70 @@ curl "https://puke365.net/api/reviews/product/PROD001"
 **Last Updated**: 2025-12-20  
 **Version**: 2.1.0 🆕  
 **Status**: ✅ Production Deployed - 200 Products Database
+
+---
+
+## 🐛 최근 버그 수정 (v2.0.1)
+
+### 수정된 문제
+
+1. **메인화면 버튼 클릭 오류**
+   - **증상**: 로그인, 회원가입, 공지 버튼 클릭 시 아무 동작 없음
+   - **원인**: 인라인 `onclick` 이벤트에서 호출하는 함수들이 전역 스코프에 노출되지 않음
+   - **해결**: 모든 이벤트 핸들러 함수를 `window` 객체에 명시적으로 할당
+   ```javascript
+   window.showLogin = showLogin;
+   window.showRegister = showRegister;
+   window.showNotices = showNotices;
+   // ... 기타 함수들
+   ```
+
+2. **관리자 페이지 공지 등록 오류**
+   - **증상**: 공지사항 등록 시 이미지 업로드 실패 및 저장 오류
+   - **원인**: admin.js의 함수들이 전역 스코프에 노출되지 않음
+   - **해결**: 관리자 함수들을 `window` 객체에 할당하고 에러 핸들링 개선
+   ```javascript
+   window.handleCreateNotice = handleCreateNotice;
+   window.handleImageUpload = handleImageUpload;
+   // ... 기타 관리자 함수들
+   ```
+
+3. **DOM 안전성 개선**
+   - 모든 DOM 요소 접근 시 `null` 체크 추가
+   - 에러 발생 시 상세한 에러 메시지 콘솔 출력
+   - 사용자 친화적 에러 메시지 표시
+
+### 영향 받는 파일
+- `public/static/app.js` - 메인 애플리케이션 JavaScript
+- `public/static/admin.js` - 관리자 패널 JavaScript
+
+### 테스트 방법
+1. **메인화면 버튼 테스트**
+   - https://puke365.net/ 접속
+   - 우측 상단 "로그인", "회원가입", "공지" 버튼 클릭
+   - 각 모달이 정상적으로 표시되는지 확인
+
+2. **관리자 공지 등록 테스트**
+   - https://puke365.net/secret-admin-panel-xyz123 접속
+   - "공지사항 등록" 클릭
+   - 제목, 내용 입력 후 이미지 업로드
+   - "등록하기" 버튼 클릭하여 정상 저장 확인
+
+---
+
+## 📝 알려진 이슈 및 제한사항
+
+1. **데이터베이스**
+   - 현재 200개 제품 데이터는 시드 데이터로 생성됨
+   - FDA/MFDS API 연동은 구현되었으나 실제 대량 데이터 동기화는 향후 작업
+
+2. **이미지 인식**
+   - Google Vision API 통합 완료
+   - API 키 설정 필요 (환경변수: `GOOGLE_VISION_API_KEY`)
+
+3. **관리자 인증**
+   - 현재 URL 기반 접근 (`/secret-admin-panel-xyz123`)
+   - 프로덕션 환경에서는 IP 화이트리스트 또는 별도 인증 추가 권장
+
+---
+
