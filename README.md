@@ -605,3 +605,158 @@ curl "https://puke365.net/api/reviews/product/PROD001"
 
 ---
 
+
+---
+
+## 🧠 고급 이미지 검색 기능 (Google Vision API)
+
+### 개요
+
+DietMed Global은 **2가지 이미지 검색 모드**를 제공합니다:
+
+1. **간단 모드** (기본) - API 키 불필요
+   - 데이터베이스에서 인기 다이어트 의약품 자동 검색
+   - 빠르고 간편한 검색
+
+2. **고급 모드** (선택사항) - Google Vision API 필요
+   - 실제 OCR로 알약 이미지에서 텍스트 추출
+   - 제품명, NDC 코드, 제조사명 자동 인식
+   - 높은 정확도의 제품 매칭
+
+### 고급 모드 설정 방법
+
+#### 1. Google Vision API 키 발급
+
+1. **Google Cloud Console** 접속: https://console.cloud.google.com
+2. 프로젝트 생성 또는 선택
+3. **API 및 서비스 > 라이브러리**로 이동
+4. "**Cloud Vision API**" 검색 후 활성화
+5. **API 및 서비스 > 사용자 인증 정보**로 이동
+6. **사용자 인증 정보 만들기 > API 키** 선택
+7. 생성된 API 키 복사
+
+#### 2. 로컬 개발 환경 설정
+
+```bash
+# .dev.vars 파일 생성 (로컬 개발용)
+cp .dev.vars.example .dev.vars
+
+# API 키 입력
+echo "GOOGLE_VISION_API_KEY=your_actual_api_key_here" > .dev.vars
+```
+
+#### 3. Cloudflare Pages 프로덕션 설정
+
+```bash
+# Wrangler로 시크릿 설정
+npx wrangler pages secret put GOOGLE_VISION_API_KEY --project-name dietmed-global
+
+# 또는 Cloudflare Dashboard에서 설정:
+# 1. Cloudflare Dashboard > Workers & Pages
+# 2. dietmed-global 프로젝트 선택
+# 3. Settings > Environment variables
+# 4. Production 탭에서 "Add variable" 클릭
+# 5. Name: GOOGLE_VISION_API_KEY, Value: (API 키)
+```
+
+### 사용 방법
+
+#### 웹 UI에서 사용
+
+1. https://puke365.net/ 접속
+2. "**사진으로 제품 찾기**" 섹션으로 이동
+3. 우측 상단의 **🧠 고급** 체크박스 클릭
+4. "갤러리에서 선택" 또는 "카메라 촬영"으로 이미지 선택
+5. "**이미지로 검색**" 버튼 클릭
+6. ✅ **AI 분석 결과 확인**:
+   - 인식된 텍스트
+   - 추출된 키워드 (제품명, NDC 코드 등)
+   - 신뢰도 점수
+   - 매칭된 제품 목록
+
+#### API로 직접 호출
+
+```bash
+# 간단 모드 (기본)
+curl -X POST https://puke365.net/api/search/image \
+  -F "image=@pill_image.jpg"
+
+# 고급 모드 (Google Vision API 사용)
+curl -X POST https://puke365.net/api/search/image \
+  -F "image=@pill_image.jpg" \
+  -F "advanced=true"
+```
+
+### OCR 인식 대상
+
+고급 모드에서 자동으로 인식하는 정보:
+
+✅ **제품명**: Wegovy, Ozempic, Saxenda, Mounjaro 등  
+✅ **성분명**: Semaglutide, Liraglutide, Tirzepatide 등  
+✅ **NDC 코드**: `0000-0000-00` 형식  
+✅ **제조사**: Novo Nordisk, Eli Lilly, Pfizer 등  
+✅ **기타 텍스트**: 용량, 용법 등
+
+### 응답 예시
+
+```json
+{
+  "success": true,
+  "analysis_method": "google_vision_api",
+  "ocr_result": {
+    "detected_text": "Wegovy 2.4mg Novo Nordisk\nNDC 0169-4517-02",
+    "detected_labels": ["Pharmaceutical", "Medicine", "Injection"],
+    "confidence": 0.95,
+    "extracted_terms": ["wegovy", "novo nordisk", "0169-4517-02"]
+  },
+  "products": [
+    {
+      "product_id": "PROD001",
+      "product_name": "Wegovy",
+      "ingredient_name": "Semaglutide",
+      "manufacturer_name": "Novo Nordisk"
+    }
+  ],
+  "total": 1,
+  "mode": "advanced"
+}
+```
+
+### 비용 안내
+
+**Google Vision API 가격** (2025년 기준):
+- **무료 할당량**: 월 1,000건
+- **초과 요금**: 1,000건당 $1.50
+
+**권장 사용 전략**:
+- 개발/테스트: 간단 모드 사용
+- 프로덕션: 필요 시에만 고급 모드 활성화
+- 일반 사용자: 간단 모드로 충분
+- 전문 사용자: 고급 모드로 정확도 향상
+
+### 문제 해결
+
+**Q: 고급 모드를 켰는데 작동하지 않아요**  
+A: API 키가 올바르게 설정되었는지 확인하세요. 설정되지 않은 경우 자동으로 간단 모드로 fallback됩니다.
+
+**Q: "API 키가 필요합니다" 오류가 나요**  
+A: Google Cloud Console에서 Vision API를 활성화하고 API 키를 발급받으세요.
+
+**Q: 비용이 걱정돼요**  
+A: 월 1,000건까지 무료입니다. 간단 모드를 기본으로 사용하고, 필요할 때만 고급 모드를 활성화하세요.
+
+### 기술 세부사항
+
+**지원하는 이미지 형식**:
+- JPG, PNG, GIF, BMP
+- 최대 크기: 10MB
+- 권장 해상도: 640x480 이상
+
+**OCR 처리 시간**:
+- 간단 모드: ~500ms
+- 고급 모드: ~2-3초 (Google Vision API 호출 포함)
+
+**정확도**:
+- 간단 모드: 제품명 기반 검색
+- 고급 모드: 90%+ 텍스트 인식 정확도 (Google Vision API)
+
