@@ -310,8 +310,13 @@ function changeLanguage(lang) {
   }
 }
 
-// Load saved language preference
+// ============================================================================
+// Toggle sections
+// ============================================================================
+
+// Load saved language preference and setup event listeners
 window.addEventListener('DOMContentLoaded', () => {
+  // Load language preference
   const savedLang = localStorage.getItem('dietmed_lang') || 'ko';
   const langDropdown = document.getElementById('langDropdown');
   if (langDropdown) {
@@ -319,54 +324,71 @@ window.addEventListener('DOMContentLoaded', () => {
   }
   // Apply translation immediately on page load
   changeLanguage(savedLang);
-});
-
-// ============================================================================
-// Toggle sections
-// ============================================================================
-
-// 스캔 버튼 클릭 - 바코드 스캔 섹션 표시
-document.getElementById('scanBtn')?.addEventListener('click', () => {
-  const scanSection = document.getElementById('scanSection');
-  scanSection.classList.remove('hidden');
-  scanSection.scrollIntoView({ behavior: 'smooth' });
   
-  // 바코드 입력란에 포커스
-  setTimeout(() => {
-    document.getElementById('barcodeInput')?.focus();
-  }, 300);
-});
-
-// 검색 버튼 클릭 - 검색 섹션으로 스크롤
-document.getElementById('searchBtn')?.addEventListener('click', () => {
-  const searchSection = document.getElementById('searchSection');
-  searchSection.scrollIntoView({ behavior: 'smooth' });
-  
-  // 검색 입력란에 포커스
-  setTimeout(() => {
-    document.getElementById('searchInput')?.focus();
-  }, 300);
-});
-
-// 목록 버튼 클릭 - 전체 제품 목록 표시
-document.getElementById('listBtn')?.addEventListener('click', async () => {
-  const searchSection = document.getElementById('searchSection');
-  searchSection.scrollIntoView({ behavior: 'smooth' });
-  
-  // 전체 제품 목록 로드
-  await loadAllProducts();
-});
-
-// Enter key handlers
-document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
-    searchProducts();
+  // 스캔 버튼 클릭 - 바코드 스캔 섹션 표시
+  const scanBtn = document.getElementById('scanBtn');
+  if (scanBtn) {
+    scanBtn.addEventListener('click', () => {
+      const scanSection = document.getElementById('scanSection');
+      if (scanSection) {
+        scanSection.classList.remove('hidden');
+        scanSection.scrollIntoView({ behavior: 'smooth' });
+        
+        // 바코드 입력란에 포커스
+        setTimeout(() => {
+          document.getElementById('barcodeInput')?.focus();
+        }, 300);
+      }
+    });
   }
-});
 
-document.getElementById('barcodeInput')?.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
-    scanBarcode();
+  // 검색 버튼 클릭 - 검색 섹션으로 스크롤
+  const searchBtn = document.getElementById('searchBtn');
+  if (searchBtn) {
+    searchBtn.addEventListener('click', () => {
+      const searchSection = document.getElementById('searchSection');
+      if (searchSection) {
+        searchSection.scrollIntoView({ behavior: 'smooth' });
+        
+        // 검색 입력란에 포커스
+        setTimeout(() => {
+          document.getElementById('searchInput')?.focus();
+        }, 300);
+      }
+    });
+  }
+
+  // 목록 버튼 클릭 - 전체 제품 목록 표시
+  const listBtn = document.getElementById('listBtn');
+  if (listBtn) {
+    listBtn.addEventListener('click', async () => {
+      const searchSection = document.getElementById('searchSection');
+      if (searchSection) {
+        searchSection.scrollIntoView({ behavior: 'smooth' });
+        
+        // 전체 제품 목록 로드
+        await loadAllProducts();
+      }
+    });
+  }
+
+  // Enter key handlers
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        searchProducts();
+      }
+    });
+  }
+
+  const barcodeInput = document.getElementById('barcodeInput');
+  if (barcodeInput) {
+    barcodeInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        scanBarcode();
+      }
+    });
   }
 });
 
