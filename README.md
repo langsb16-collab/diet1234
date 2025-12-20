@@ -32,10 +32,16 @@
 
 ### 프로덕션 환경
 - **커스텀 도메인**: https://puke365.net/
-- **Cloudflare Pages**: https://28f04c83.dietmed-global.pages.dev
+- **Cloudflare Pages**: https://ade3203f.dietmed-global.pages.dev
 - **API 엔드포인트**: https://puke365.net/api
 - **헬스 체크**: https://puke365.net/api/health
 - **GitHub 저장소**: https://github.com/langsb16-collab/diet1234
+
+### 새로운 API 엔드포인트
+- **FDA API**: https://puke365.net/api/external/fda/search?q=Wegovy
+- **이미지 인식**: https://puke365.net/api/image-recognition/analyze-simple
+- **리뷰 시스템**: https://puke365.net/api/reviews/product/PROD001
+- **B2B 위젯**: https://puke365.net/api/b2b/widget/embed-example.html
 
 ### 개발 환경
 - **로컬 서버**: http://localhost:3000 (PM2로 실행)
@@ -379,20 +385,79 @@ curl https://dietmed-global.pages.dev/api/health
 
 ## 🎉 현재 구현 완료 기능
 
-### 핵심 기능
+### 2025-12-20 업데이트: 5가지 주요 개선 사항 완료
+
+#### 1️⃣ 실제 규제기관 API 연동 ✅
+- **FDA OpenFDA API** - 의약품 정보, 라벨, 부작용 데이터
+- **MFDS 공공데이터** - 식약처 의약품 허가 정보 (API 키 필요)
+- **통합 검색** - 모든 규제기관 동시 검색
+- **엔드포인트**:
+  - `/api/external/fda/search?q=Wegovy`
+  - `/api/external/fda/label?product=Wegovy`
+  - `/api/external/fda/adverse-events?product=Wegovy`
+  - `/api/external/mfds/search?q=오젬픽&apiKey=YOUR_KEY`
+
+#### 2️⃣ 제품 데이터베이스 확장 ✅
+- **25개 제품** (기존 7개 → 25개)
+- **새로운 카테고리**:
+  - Phentermine 기반 제품 (Adipex-P, Lomaira)
+  - 복합 제품 (Qsymia)
+  - 희귀 유전 비만 (Imcivree)
+  - Metformin (당뇨병 치료약)
+  - 기타 식욕억제제 (Tenuate, Didrex, Bontril)
+- **확장 성분**: 11개 추가 (총 18개)
+- **제조사**: 8개 추가 (총 12개)
+
+#### 3️⃣ 이미지 인식 기능 ✅
+- **Google Cloud Vision API 통합**
+- **OCR + 라벨 검출** - 알약 텍스트 및 로고 인식
+- **자동 제품 매칭** - DB에서 유사 제품 검색
+- **엔드포인트**:
+  - `/api/image-recognition/analyze` (API 키 필요)
+  - `/api/image-recognition/analyze-simple` (데모 모드)
+  - `/api/image-recognition/providers` (지원 provider 목록)
+
+#### 4️⃣ 사용자 리뷰 시스템 ✅
+- **제품 리뷰 작성** - 1-5점 평점, 제목, 내용
+- **리뷰 투표** - 도움됨/도움 안됨
+- **리뷰 신고** - 스팸, 부적절, 가짜 리뷰 신고
+- **통계 집계** - 평균 평점, 평점 분포, 검증된 구매 수
+- **마이그레이션**: `0005_add_reviews.sql`
+- **엔드포인트**:
+  - `GET /api/reviews/product/:productId`
+  - `POST /api/reviews` (리뷰 작성)
+  - `POST /api/reviews/:reviewId/vote`
+  - `POST /api/reviews/:reviewId/report`
+  - `GET /api/reviews/stats/:productId`
+
+#### 5️⃣ B2B API 위젯 ✅
+- **임베드 가능한 위젯** - 약국/쇼핑몰 사이트 통합
+- **제품 검증 위젯** - 안전 점수, 허가 정보 표시
+- **커스터마이징** - 라이트/다크 테마, 다국어
+- **JavaScript 임베드** - `<script>` 태그로 간편 통합
+- **엔드포인트**:
+  - `GET /api/b2b/widget/product-verification?productId=PROD001`
+  - `GET /api/b2b/widget/embed.js` (임베드 스크립트)
+  - `GET /api/b2b/widget/embed-example.html` (사용 예제)
+
+### 기존 핵심 기능
 ✅ **프로젝트 초기 설정** (Hono + Cloudflare Pages + D1)  
 ✅ **Git 저장소 초기화** 및 .gitignore 설정  
-✅ **DB 스키마 마이그레이션** (4개 마이그레이션 파일)  
-✅ **시드 데이터** (9개 제품, 30개 규제기관, 28개 비교 항목)  
+✅ **DB 스키마 마이그레이션** (5개 마이그레이션 파일)  
+✅ **시드 데이터** (25개 제품, 30개 규제기관, 28개 비교 항목)  
 ✅ **다국어 지원** (한국어, 영어, 중국어, 일본어)
 
-### API 엔드포인트 (14개)
+### API 엔드포인트 (30+ 개)
 ✅ 제품 검색, 상세 조회, 바코드 스캔  
 ✅ 규제기관 조회 (30개 글로벌 기관)  
 ✅ **제품 비교** (2-4개 제품 상세 비교)  
 ✅ **안전 프로필 조회** (성분별 효능·부작용)  
 ✅ **안전 점수 조회** (0-100점, 4단계 등급)  
 ✅ **FAQ 조회** (10개 소비자 질문)  
+✅ **FDA API 연동** (검색, 라벨, 부작용)  
+✅ **이미지 인식** (알약 사진 분석)  
+✅ **리뷰 시스템** (작성, 투표, 신고, 통계)  
+✅ **B2B 위젯** (임베드 스크립트, 예제)  
 ✅ 금지 성분 조회, 사용자 신고
 
 ### 프론트엔드 UI
@@ -423,28 +488,55 @@ curl https://dietmed-global.pages.dev/api/health
 
 ---
 
-## 🚧 다음 단계
+## 🚧 향후 개선 방향
 
-⏳ 실제 FDA/MFDS API 연동  
-⏳ 제품 데이터 확장 (20-30개 제품)  
-⏳ 알약 사진 인식 기능 추가  
-⏳ B2B API 개발 (판매처 검증 위젯)  
-⏳ 사용자 인증 시스템 (선택사항)  
-⏳ 제품 리뷰 및 평점 기능
+⏳ **프로덕션 데이터 확장** - 100+ 제품 데이터베이스  
+⏳ **실시간 가격 비교** - 온라인 약국 가격 API 연동  
+⏳ **사용자 인증 시스템** - OAuth, 소셜 로그인  
+⏳ **개인화 추천 시스템** - 사용자 건강 프로필 기반  
+⏳ **푸시 알림** - 리콜, 안전 경고  
+⏳ **모바일 앱** - React Native / Flutter
 
 ---
 
 ## 🎉 배포 완료
 
 ✅ **GitHub 저장소**: https://github.com/langsb16-collab/diet1234  
-✅ **Cloudflare Pages 배포**: https://28f04c83.dietmed-global.pages.dev  
+✅ **Cloudflare Pages 배포**: https://ade3203f.dietmed-global.pages.dev  
 ✅ **커스텀 도메인 연결**: https://puke365.net/  
-✅ **데이터베이스 마이그레이션**: D1 (SQLite) 적용 완료  
-✅ **시드 데이터**: 9개 제품, 30개 규제기관 데이터 삽입  
-✅ **API 엔드포인트**: 14개 API 정상 작동
+✅ **데이터베이스 마이그레이션**: D1 (SQLite) 5개 마이그레이션 적용  
+✅ **시드 데이터**: 25개 제품, 30개 규제기관, 18개 성분  
+✅ **API 엔드포인트**: 30+ API 정상 작동
+✅ **5가지 주요 개선**: FDA API, 제품 확장, 이미지 인식, 리뷰, B2B 위젯
+
+---
+
+## 📝 API 사용 예제
+
+### 1. FDA에서 제품 검색
+```bash
+curl "https://puke365.net/api/external/fda/search?q=Wegovy"
+```
+
+### 2. 이미지로 알약 인식 (데모)
+```bash
+curl -X POST "https://puke365.net/api/image-recognition/analyze-simple" \
+  -F "image=@pill.jpg"
+```
+
+### 3. 제품 리뷰 조회
+```bash
+curl "https://puke365.net/api/reviews/product/PROD001"
+```
+
+### 4. B2B 위젯 임베드
+```html
+<script src="https://puke365.net/api/b2b/widget/embed.js"></script>
+<div class="dietmed-widget" data-product-id="PROD001"></div>
+```
 
 ---
 
 **Last Updated**: 2025-12-20  
-**Version**: 1.3.0  
-**Status**: ✅ Production Deployed
+**Version**: 2.0.0  
+**Status**: ✅ Production Deployed with 5 Major Enhancements
