@@ -3,6 +3,10 @@ import { cors } from 'hono/cors';
 import { serveStatic } from 'hono/cloudflare-workers';
 import type { Env } from './types';
 import { apiRoutes } from './routes/api';
+import { externalApiRoutes } from './routes/external-api';
+import { imageRecognitionRoutes } from './routes/image-recognition';
+import { reviewRoutes } from './routes/reviews';
+import { b2bWidgetRoutes } from './routes/b2b-widget';
 import { renderer } from './renderer';
 
 const app = new Hono<{ Bindings: Env }>();
@@ -18,6 +22,18 @@ app.use(renderer);
 
 // Mount API routes
 app.route('/api', apiRoutes);
+
+// Mount external API routes (FDA, MFDS, etc.)
+app.route('/api/external', externalApiRoutes);
+
+// Mount image recognition routes
+app.route('/api/image-recognition', imageRecognitionRoutes);
+
+// Mount review routes
+app.route('/api/reviews', reviewRoutes);
+
+// Mount B2B widget routes
+app.route('/api/b2b', b2bWidgetRoutes);
 
 // Admin page (URL only access - No login required)
 // **Security Warning**: Anyone with this URL can access admin panel!
