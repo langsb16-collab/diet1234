@@ -32,7 +32,7 @@
 
 ### 프로덕션 환경
 - **커스텀 도메인**: https://puke365.net/
-- **Cloudflare Pages**: https://ade3203f.dietmed-global.pages.dev
+- **Cloudflare Pages**: https://d0f385d3.dietmed-global.pages.dev
 - **API 엔드포인트**: https://puke365.net/api
 - **헬스 체크**: https://puke365.net/api/health
 - **GitHub 저장소**: https://github.com/langsb16-collab/diet1234
@@ -55,9 +55,9 @@
 #### 주요 테이블
 
 **1. Master Data (마스터 데이터)**
-- `ingredients` - 성분 마스터 (7개 성분)
-- `manufacturers` - 제조사 (4개)
-- `products` - 제품 (7개 제품)
+- `ingredients` - 성분 마스터 (3개 기본 성분)
+- `manufacturers` - 제조사 (3개 기본 제조사)
+- `products` - 제품 (200개 제품) 🆕
 
 **2. Regulatory Data (규제 데이터)**
 - `approvals` - 국가별 허가 (9개 승인 기록)
@@ -74,16 +74,15 @@
 - `user_scans` - 스캔 이력
 - `user_reports` - 사용자 신고
 
-### 샘플 데이터
+### 제품 데이터
 
-#### 제품
-- **Wegovy** (Semaglutide 2.4mg) - 미국/영국/EU 승인
-- **Saxenda** (Liraglutide 6mg) - 미국/한국 승인
-- **Xenical** (Orlistat 120mg) - 미국 승인 (처방)
-- **Alli** (Orlistat 60mg) - 미국 승인 (OTC)
-- **Mounjaro** (Tirzepatide 5mg) - 미국 승인
-- **Zepbound** (Tirzepatide 5mg) - 미국 승인
-- **Contrave** (Naltrexone/Bupropion) - 일본 승인
+#### 200개 제품 데이터베이스 🆕
+- **Semaglutide 기반**: 50개 변형 제품
+- **Liraglutide 기반**: 50개 변형 제품  
+- **Orlistat 기반**: 50개 변형 제품
+- **기타 다이어트 제품**: 50개 제품
+- **다양한 용량**: 1mg ~ 50mg 다양한 강도
+- **다양한 제형**: 주사제, 정제, 캡슐
 
 #### 금지 성분
 - **Sibutramine** (시부트라민) - 전세계 금지 (심혈관 위험)
@@ -398,15 +397,14 @@ curl https://dietmed-global.pages.dev/api/health
   - `/api/external/mfds/search?q=오젬픽&apiKey=YOUR_KEY`
 
 #### 2️⃣ 제품 데이터베이스 확장 ✅
-- **25개 제품** (기존 7개 → 25개)
-- **새로운 카테고리**:
-  - Phentermine 기반 제품 (Adipex-P, Lomaira)
-  - 복합 제품 (Qsymia)
-  - 희귀 유전 비만 (Imcivree)
-  - Metformin (당뇨병 치료약)
-  - 기타 식욕억제제 (Tenuate, Didrex, Bontril)
-- **확장 성분**: 11개 추가 (총 18개)
-- **제조사**: 8개 추가 (총 12개)
+- **200개 제품** (기존 25개 → 200개) 🆕
+- **제품 카테고리**:
+  - Semaglutide 변형: 50개 (1mg ~ 50mg)
+  - Liraglutide 변형: 50개 (1mg ~ 50mg)
+  - Orlistat 변형: 50개 (1mg ~ 50mg)
+  - 기타 다이어트 제품: 50개
+- **기본 성분**: 3개 (Semaglutide, Liraglutide, Orlistat)
+- **제조사**: 3개 기본 제조사
 
 #### 3️⃣ 이미지 인식 기능 ✅
 - **Google Cloud Vision API 통합**
@@ -502,12 +500,12 @@ curl https://dietmed-global.pages.dev/api/health
 ## 🎉 배포 완료
 
 ✅ **GitHub 저장소**: https://github.com/langsb16-collab/diet1234  
-✅ **Cloudflare Pages 배포**: https://ade3203f.dietmed-global.pages.dev  
+✅ **Cloudflare Pages 배포**: https://d0f385d3.dietmed-global.pages.dev  
 ✅ **커스텀 도메인 연결**: https://puke365.net/  
 ✅ **데이터베이스 마이그레이션**: D1 (SQLite) 5개 마이그레이션 적용  
-✅ **시드 데이터**: 25개 제품, 30개 규제기관, 18개 성분  
+✅ **시드 데이터**: 200개 제품 🆕, 30개 규제기관, 3개 기본 성분  
 ✅ **API 엔드포인트**: 30+ API 정상 작동
-✅ **5가지 주요 개선**: FDA API, 제품 확장, 이미지 인식, 리뷰, B2B 위젯
+✅ **5가지 주요 개선**: FDA API, 제품 확장(200개), 이미지 인식, 리뷰, B2B 위젯
 
 ---
 
@@ -538,5 +536,5 @@ curl "https://puke365.net/api/reviews/product/PROD001"
 ---
 
 **Last Updated**: 2025-12-20  
-**Version**: 2.0.0  
-**Status**: ✅ Production Deployed with 5 Major Enhancements
+**Version**: 2.1.0 🆕  
+**Status**: ✅ Production Deployed - 200 Products Database
