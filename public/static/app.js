@@ -1374,21 +1374,43 @@ function updateAuthUI() {
 
 // 로그인 모달 표시
 function showLogin() {
-  document.getElementById('loginModal').classList.remove('hidden');
+  const loginModal = document.getElementById('loginModal');
+  if (loginModal) {
+    loginModal.classList.remove('hidden');
+  } else {
+    console.error('loginModal element not found');
+  }
 }
 
 function closeLogin() {
-  document.getElementById('loginModal').classList.add('hidden');
+  const loginModal = document.getElementById('loginModal');
+  if (loginModal) {
+    loginModal.classList.add('hidden');
+  }
 }
 
 // 회원가입 모달 표시
 function showRegister() {
-  document.getElementById('registerModal').classList.remove('hidden');
+  const registerModal = document.getElementById('registerModal');
+  if (registerModal) {
+    registerModal.classList.remove('hidden');
+  } else {
+    console.error('registerModal element not found');
+  }
 }
 
 function closeRegister() {
-  document.getElementById('registerModal').classList.add('hidden');
+  const registerModal = document.getElementById('registerModal');
+  if (registerModal) {
+    registerModal.classList.add('hidden');
+  }
 }
+
+// 전역 함수로 명시적 노출 (인라인 onclick에서 호출 가능하도록)
+window.showLogin = showLogin;
+window.closeLogin = closeLogin;
+window.showRegister = showRegister;
+window.closeRegister = closeRegister;
 
 // 로그인 처리
 async function handleLogin(event) {
@@ -1457,31 +1479,50 @@ async function logout() {
   }
 }
 
+// 전역 함수로 명시적 노출
+window.logout = logout;
+window.handleLogin = handleLogin;
+window.handleRegister = handleRegister;
+
 // 공지사항 표시
 async function showNotices() {
   const noticeSection = document.getElementById('noticeSection');
+  if (!noticeSection) {
+    console.error('noticeSection element not found');
+    return;
+  }
+  
   noticeSection.classList.remove('hidden');
   
   try {
     const response = await axios.get('/api/notices');
-    const notices = response.data.notices;
+    const notices = response.data.notices || [];
     
     const noticeList = document.getElementById('noticeList');
-    noticeList.innerHTML = notices.map(notice => `
-      <div class="border-b border-gray-200 pb-3 cursor-pointer hover:bg-orange-50 p-3 rounded-lg transition" onclick="showNoticeDetail('${notice.notice_id}')">
-        <h4 class="text-sm font-bold text-gray-900 mb-1">${notice.title}</h4>
-        <div class="flex justify-between items-center text-xs text-gray-500">
-          <span><i class="fas fa-calendar mr-1"></i>${new Date(notice.created_at).toLocaleDateString('ko-KR')}</span>
-          <span><i class="fas fa-eye mr-1"></i>${notice.view_count}</span>
+    if (!noticeList) {
+      console.error('noticeList element not found');
+      return;
+    }
+    
+    if (notices.length === 0) {
+      noticeList.innerHTML = '<p class="text-center text-gray-500 py-4">등록된 공지사항이 없습니다.</p>';
+    } else {
+      noticeList.innerHTML = notices.map(notice => `
+        <div class="border-b border-gray-200 pb-3 cursor-pointer hover:bg-orange-50 p-3 rounded-lg transition" onclick="showNoticeDetail('${notice.notice_id}')">
+          <h4 class="text-sm font-bold text-gray-900 mb-1">${notice.title}</h4>
+          <div class="flex justify-between items-center text-xs text-gray-500">
+            <span><i class="fas fa-calendar mr-1"></i>${new Date(notice.created_at).toLocaleDateString('ko-KR')}</span>
+            <span><i class="fas fa-eye mr-1"></i>${notice.view_count || 0}</span>
+          </div>
         </div>
-      </div>
-    `).join('');
+      `).join('');
+    }
     
     // 스크롤
     noticeSection.scrollIntoView({ behavior: 'smooth' });
   } catch (error) {
     console.error('Notice error:', error);
-    alert('공지사항을 불러오는데 실패했습니다.');
+    alert('공지사항을 불러오는데 실패했습니다: ' + (error.response?.data?.error || error.message));
   }
 }
 
@@ -1491,28 +1532,66 @@ async function showNoticeDetail(noticeId) {
     const response = await axios.get(`/api/notices/${noticeId}`);
     const notice = response.data.notice;
     
-    document.getElementById('noticeDetailTitle').textContent = notice.title;
-    document.getElementById('noticeDetailDate').textContent = new Date(notice.created_at).toLocaleString('ko-KR');
-    document.getElementById('noticeDetailContent').innerHTML = notice.content.replace(/\n/g, '<br>');
+    const noticeDetailTitle = document.getElementById('noticeDetailTitle');
+    const noticeDetailDate = document.getElementById('noticeDetailDate');
+    const noticeDetailContent = document.getElementById('noticeDetailContent');
+    const noticeDetailImage = document.getElementById('noticeDetailImage');
+    const noticeDetailModal = document.getElementById('noticeDetailModal');
     
-    if (notice.image_url) {
-      document.getElementById('noticeDetailImage').innerHTML = `
-        <img src="${notice.image_url}" alt="Notice Image" class="w-full rounded-lg">
-      `;
-    } else {
-      document.getElementById('noticeDetailImage').innerHTML = '';
+    if (noticeDetailTitle) noticeDetailTitle.textContent = notice.title;
+    if (noticeDetailDate) noticeDetailDate.textContent = new Date(notice.created_at).toLocaleString('ko-KR');
+    if (noticeDetailContent) noticeDetailContent.innerHTML = notice.content.replace(/\n/g, '<br>');
+    
+    if (noticeDetailImage) {
+      if (notice.image_url) {
+        noticeDetailImage.innerHTML = `
+          <img src="${notice.image_url}" alt="Notice Image" class="w-full rounded-lg">
+        `;
+      } else {
+        noticeDetailImage.innerHTML = '';
+      }
     }
     
-    document.getElementById('noticeDetailModal').classList.remove('hidden');
+    if (noticeDetailModal) {
+      noticeDetailModal.classList.remove('hidden');
+    }
   } catch (error) {
     console.error('Notice detail error:', error);
-    alert('공지사항을 불러오는데 실패했습니다.');
+    alert('공지사항을 불러오는데 실패했습니다: ' + (error.response?.data?.error || error.message));
   }
 }
 
 function closeNoticeDetail() {
-  document.getElementById('noticeDetailModal').classList.add('hidden');
+  const noticeDetailModal = document.getElementById('noticeDetailModal');
+  if (noticeDetailModal) {
+    noticeDetailModal.classList.add('hidden');
+  }
 }
+
+// 전역 함수로 명시적 노출 (인라인 onclick/onchange 에서 호출 가능하도록)
+window.changeLanguage = changeLanguage;
+window.loadAllProducts = loadAllProducts;
+window.handleImageSelect = handleImageSelect;
+window.clearImageSearch = clearImageSearch;
+window.searchByImage = searchByImage;
+window.searchProducts = searchProducts;
+window.scanBarcode = scanBarcode;
+window.viewProduct = viewProduct;
+window.reportProduct = reportProduct;
+window.toggleFAQ = toggleFAQ;
+window.toggleProductSelection = toggleProductSelection;
+window.compareProducts = compareProducts;
+window.clearComparison = clearComparison;
+window.showLogin = showLogin;
+window.closeLogin = closeLogin;
+window.showRegister = showRegister;
+window.closeRegister = closeRegister;
+window.handleLogin = handleLogin;
+window.handleRegister = handleRegister;
+window.logout = logout;
+window.showNotices = showNotices;
+window.showNoticeDetail = showNoticeDetail;
+window.closeNoticeDetail = closeNoticeDetail;
 
 // API 요청 시 인증 토큰 자동 추가
 axios.interceptors.request.use(config => {

@@ -194,21 +194,51 @@ async function handleCreateNotice(event) {
   // 업로드된 이미지 URL 우선 사용
   const imageUrl = uploadedImageUrl || formData.get('image_url') || null;
   
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const originalText = submitBtn ? submitBtn.textContent : '';
+  
   try {
-    await axios.post('/api/admin/notices', {
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>등록 중...';
+    }
+    
+    const response = await axios.post('/api/admin/notices', {
       title: formData.get('title'),
       content: formData.get('content'),
       image_url: imageUrl,
       is_published: formData.get('is_published') ? 1 : 0
     });
     
-    alert('공지사항이 등록되었습니다.');
-    uploadedImageUrl = ''; // 초기화
-    loadNotices();
+    if (response.data.success) {
+      alert('공지사항이 등록되었습니다.');
+      uploadedImageUrl = ''; // 초기화
+      loadNotices();
+    } else {
+      throw new Error(response.data.error || '등록 실패');
+    }
   } catch (error) {
-    alert('공지사항 등록에 실패했습니다.');
+    console.error('Notice creation error:', error);
+    const errorMsg = error.response?.data?.error || error.message || '공지사항 등록에 실패했습니다.';
+    alert('오류: ' + errorMsg);
+    
+    // 버튼 복구
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
   }
 }
+
+// 전역 함수로 명시적 노출
+window.loadUsers = loadUsers;
+window.upgradeUser = upgradeUser;
+window.deleteUser = deleteUser;
+window.showCreateNotice = showCreateNotice;
+window.handleImageUpload = handleImageUpload;
+window.handleCreateNotice = handleCreateNotice;
+window.loadNotices = loadNotices;
+window.deleteNotice = deleteNotice;
 
 async function loadNotices() {
   try {
