@@ -689,17 +689,6 @@ function displaySearchResults(data) {
     // Show comparison button if products found
     document.getElementById('compareButtonContainer').classList.remove('hidden');
     updateCompareButton();
-    
-  } catch (error) {
-    console.error('Search error:', error);
-    resultsDiv.innerHTML = `
-      <div class="text-center py-8 text-red-500">
-        <i class="fas fa-exclamation-circle text-4xl mb-4"></i>
-        <p>검색 중 오류가 발생했습니다.</p>
-        <p class="text-sm mt-2">${error.message}</p>
-      </div>
-    `;
-  }
 }
 
 // ============================================================================
@@ -1395,10 +1384,6 @@ function clearComparison() {
     cb.checked = false;
   });
 }
-
-  });
-}
-
 
 // ============================================================================
 // Authentication & Membership System
