@@ -629,3 +629,139 @@ apiRoutes.post('/reports', async (c) => {
     return c.json({ error: 'Internal server error' }, 500);
   }
 });
+
+// ============================================================================
+// Product Comparison
+// ============================================================================
+
+apiRoutes.get('/compare', async (c) => {
+  try {
+    const { DB } = c.env;
+    const productIds = c.req.query('products')?.split(',') || [];
+    const country = c.req.query('country') || 'KR';
+    
+    if (productIds.length < 2 || productIds.length > 4) {
+      return c.json({ 
+        error: 'Please select 2-4 products to compare' 
+      }, 400);
+    }
+    
+    // Get comparison criteria
+    const criteria = await DB.prepare(`
+      SELECT * FROM comparison_criteria 
+      WHERE is_active = 1 
+      ORDER BY display_order
+    `).all();
+    
+    // Get product details for comparison
+    const placeholders = productIds.map(() => '?').join(',');
+    
+    const products = await DB.prepare(`
+      SELECT 
+        p.*,
+        i.name_standard,
+        i.mechanism,
+        i.drug_class
+      FROM products p
+      JOIN ingredients i ON p.ingredient_id = i.ingredient_id
+      WHERE p.product_id IN (${placeholders})
+    `).bind(...productIds).all();
+    
+    // Get approvals for each product
+    const approvals = await DB.prepare(`
+      SELECT * FROM approvals
+      WHERE product_id IN (${placeholders})
+      ORDER BY product_id, 
+        CASE 
+          WHEN approval_status = 'approved' THEN 1
+          WHEN approval_status = 'under_review' THEN 2
+          ELSE 3
+        END
+    `).bind(...productIds).all();
+    
+    // Get safety profiles
+    const ingredientIds = (products.results as any[]).map(p => p.ingredient_id);
+    const safetyProfiles = await DB.prepare(`
+      SELECT * FROM safety_profiles
+      WHERE ingredient_id IN (${ingredientIds.map(() => '?').join(',')})
+    `).bind(...ingredientIds).all();
+    
+    // Get safety scores
+    const safetyScores = await DB.prepare(`
+      SELECT * FROM safety_scores
+      WHERE product_id IN (${placeholders}) AND country_code = ?
+    `).bind(...productIds, country).all();
+    
+    // Build comparison data
+    const comparison = {
+      criteria: criteria.results,
+      products: (products.results as any[]).map((product: any) => {
+        const productApprovals = (approvals.results as any[]).filter(
+          (a: any) => a.product_id === product.product_id
+        );
+        
+        const safetyProfile = (safetyProfiles.results as any[]).find(
+          (sp: any) => sp.ingredient_id === product.ingredient_id
+        );
+        
+        const safetyScore = (safetyScores.results as any[]).find(
+          (ss: any) => ss.product_id === product.product_id
+        );
+        
+        return {
+          product_id: product.product_id,
+          product_name: product.product_name,
+          generic_name: product.name_standard,
+          manufacturer: product.manufacturer_name,
+          dosage_form: product.dosage_form,
+          route: product.route,
+          mechanism: product.mechanism,
+          
+          // Approval data
+          approved_countries_count: productApprovals.filter(
+            (a: any) => a.approval_status === 'approved'
+          ).length,
+          approvals: productApprovals.map((a: any) => ({
+            country_code: a.country_code,
+            regulatory_body: a.regulatory_body,
+            approval_status: a.approval_status,
+            approval_date: a.approval_date,
+            prescription_status: a.prescription_status,
+            bmi_criteria: a.bmi_criteria,
+            age_min: a.age_min,
+            age_max: a.age_max
+          })),
+          
+          // Safety data
+          safety_profile: safetyProfile ? {
+            weight_loss_6mo: safetyProfile.weight_loss_6mo,
+            weight_loss_12mo: safetyProfile.weight_loss_12mo,
+            mechanism_detail: safetyProfile.mechanism_detail,
+            common_side_effects: JSON.parse(safetyProfile.common_side_effects),
+            serious_side_effects: JSON.parse(safetyProfile.serious_side_effects),
+            contraindications: JSON.parse(safetyProfile.contraindications),
+            drug_interactions: JSON.parse(safetyProfile.drug_interactions),
+            pregnancy_category: safetyProfile.pregnancy_category,
+            breastfeeding_safety: safetyProfile.breastfeeding_safety,
+            addiction_risk: safetyProfile.addiction_risk
+          } : null,
+          
+          // Safety score
+          safety_score: safetyScore ? {
+            total: safetyScore.total_score,
+            grade: safetyScore.grade,
+            regulatory: safetyScore.regulatory_score,
+            efficacy: safetyScore.efficacy_score,
+            safety: safetyScore.safety_score,
+            distribution: safetyScore.distribution_score
+          } : null
+        };
+      })
+    };
+    
+    return c.json(comparison);
+  } catch (error: any) {
+    console.error('Product comparison error:', error);
+    return c.json({ error: error.message }, 500);
+  }
+});

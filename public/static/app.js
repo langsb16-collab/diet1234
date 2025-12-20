@@ -204,33 +204,45 @@ async function searchProducts() {
     }
     
     let html = `
-      <div class="mb-4">
+      <div class="mb-4 flex justify-between items-center">
         <p class="text-gray-700"><span class="font-bold">${data.total}</span>개의 제품을 찾았습니다.</p>
+        <p class="text-xs text-gray-600">제품을 선택하여 비교하세요</p>
       </div>
       <div class="space-y-4">
     `;
     
     data.products.forEach(product => {
       const riskBadge = getRiskBadge(product.risk_level);
+      const isSelected = selectedProducts.includes(product.product_id);
       html += `
-        <div class="border border-gray-200 rounded p-2 hover:shadow-md transition cursor-pointer" 
-             onclick="viewProduct('${product.product_id}')">
-          <div class="flex justify-between items-start mb-1">
-            <div class="flex-1">
-              <h4 class="text-xs font-bold text-gray-900">${product.product_name}</h4>
-              <p class="text-xs text-gray-600">${product.ingredient_name}</p>
+        <div class="border border-gray-200 rounded p-2 hover:shadow-md transition ${isSelected ? 'bg-blue-50 border-blue-400' : ''}">
+          <div class="flex items-start space-x-2">
+            <input 
+              type="checkbox" 
+              value="${product.product_id}"
+              ${isSelected ? 'checked' : ''}
+              onclick="event.stopPropagation(); toggleProductSelection('${product.product_id}')"
+              class="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+            />
+            <div class="flex-1 cursor-pointer" onclick="viewProduct('${product.product_id}')">
+              <div class="flex justify-between items-start mb-1">
+                <div class="flex-1">
+                  <h4 class="text-xs font-bold text-gray-900">${product.product_name}</h4>
+                  <p class="text-xs text-gray-600">${product.ingredient_name}</p>
+                </div>
+                <div>${riskBadge}</div>
+              </div>
+              <div class="text-xs text-gray-700 space-y-0.5">
+                <p><i class="fas fa-industry text-gray-400 mr-1"></i>${product.manufacturer_name}</p>
+                <p><i class="fas fa-pills text-gray-400 mr-1"></i>${product.dosage_form} | ${product.strength}</p>
+                <p><i class="fas fa-globe text-gray-400 mr-1"></i>${product.approval_count}개 국가 승인</p>
+              </div>
+              <div class="mt-2 text-right">
+                <button class="text-blue-600 hover:text-blue-700 text-xs font-semibold">
+                  상세보기 <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+              </div>
             </div>
-            <div>${riskBadge}</div>
-          </div>
-          <div class="text-xs text-gray-700 space-y-0.5">
-            <p><i class="fas fa-industry text-gray-400 mr-1"></i>${product.manufacturer_name}</p>
-            <p><i class="fas fa-pills text-gray-400 mr-1"></i>${product.dosage_form} | ${product.strength}</p>
-            <p><i class="fas fa-globe text-gray-400 mr-1"></i>${product.approval_count}개 국가 승인</p>
-          </div>
-          <div class="mt-2 text-right">
-            <button class="text-blue-600 hover:text-blue-700 text-xs font-semibold">
-              상세보기 <i class="fas fa-arrow-right ml-1"></i>
-            </button>
           </div>
         </div>
       `;
@@ -238,6 +250,10 @@ async function searchProducts() {
     
     html += '</div>';
     resultsDiv.innerHTML = html;
+    
+    // Show comparison button if products found
+    document.getElementById('compareButtonContainer').classList.remove('hidden');
+    updateCompareButton();
     
   } catch (error) {
     console.error('Search error:', error);
@@ -696,3 +712,242 @@ function toggleFAQ(faqId) {
 window.addEventListener('DOMContentLoaded', () => {
   loadFAQs();
 });
+
+// ============================================================================
+// Product Comparison
+// ============================================================================
+
+let selectedProducts = [];
+
+function toggleProductSelection(productId) {
+  const index = selectedProducts.indexOf(productId);
+  
+  if (index > -1) {
+    // Remove from selection
+    selectedProducts.splice(index, 1);
+  } else {
+    // Add to selection (max 4)
+    if (selectedProducts.length >= 4) {
+      alert('최대 4개 제품까지 비교할 수 있습니다.');
+      return;
+    }
+    selectedProducts.push(productId);
+  }
+  
+  updateCompareButton();
+  updateProductCheckboxes();
+}
+
+function updateCompareButton() {
+  const compareBtn = document.getElementById('compareBtn');
+  if (!compareBtn) return;
+  
+  if (selectedProducts.length >= 2) {
+    compareBtn.disabled = false;
+    compareBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    compareBtn.classList.add('hover:bg-blue-700');
+    compareBtn.innerHTML = `<i class="fas fa-balance-scale mr-2"></i>비교하기 (${selectedProducts.length}개)`;
+  } else {
+    compareBtn.disabled = true;
+    compareBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    compareBtn.classList.remove('hover:bg-blue-700');
+    compareBtn.innerHTML = '<i class="fas fa-balance-scale mr-2"></i>제품 선택 (2-4개)';
+  }
+}
+
+function updateProductCheckboxes() {
+  selectedProducts.forEach(productId => {
+    const checkbox = document.querySelector(`input[value="${productId}"]`);
+    if (checkbox) {
+      checkbox.checked = true;
+    }
+  });
+}
+
+async function compareProducts() {
+  if (selectedProducts.length < 2) {
+    alert('비교하려면 최소 2개의 제품을 선택하세요.');
+    return;
+  }
+  
+  try {
+    const country = document.getElementById('countrySelect')?.value || 'KR';
+    const response = await axios.get(`/api/compare?products=${selectedProducts.join(',')}&country=${country}`);
+    
+    displayComparison(response.data);
+  } catch (error) {
+    console.error('Comparison error:', error);
+    alert('제품 비교 중 오류가 발생했습니다.');
+  }
+}
+
+function displayComparison(data) {
+  const resultsDiv = document.getElementById('results');
+  
+  // Build comparison table
+  let html = `
+    <div class="bg-white rounded-lg shadow-sm p-4">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-gray-900">
+          <i class="fas fa-balance-scale mr-2 text-blue-600"></i>제품 비교
+        </h3>
+        <button onclick="clearComparison()" class="text-sm text-gray-600 hover:text-gray-900">
+          <i class="fas fa-times mr-1"></i>닫기
+        </button>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 text-xs">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-3 py-2 text-left font-semibold text-gray-700 sticky left-0 bg-gray-50">항목</th>
+  `;
+  
+  // Product headers
+  data.products.forEach(product => {
+    html += `
+      <th class="px-3 py-2 text-left font-semibold text-gray-700">
+        ${product.product_name}
+      </th>
+    `;
+  });
+  
+  html += `</tr></thead><tbody class="bg-white divide-y divide-gray-200">`;
+  
+  // Basic information
+  html += createComparisonSection('기본 정보', [
+    { label: '제품명', key: 'product_name' },
+    { label: '성분명', key: 'generic_name' },
+    { label: '제조사', key: 'manufacturer' },
+    { label: '제형', key: 'dosage_form' },
+    { label: '투여 경로', key: 'route' }
+  ], data.products);
+  
+  // Approval information
+  html += createComparisonSection('허가 정보', [
+    { label: '허가 국가 수', key: 'approved_countries_count' }
+  ], data.products);
+  
+  // Efficacy
+  html += createComparisonSection('효능', [
+    { label: '작용 기전', key: 'safety_profile.mechanism_detail' },
+    { label: '6개월 감량률', key: 'safety_profile.weight_loss_6mo' },
+    { label: '12개월 감량률', key: 'safety_profile.weight_loss_12mo' }
+  ], data.products);
+  
+  // Safety
+  html += createComparisonSection('안전성', [
+    { label: '흔한 부작용', key: 'safety_profile.common_side_effects', isArray: true, limit: 3 },
+    { label: '심각한 부작용', key: 'safety_profile.serious_side_effects', isArray: true, limit: 2 },
+    { label: '금기사항', key: 'safety_profile.contraindications', isArray: true, limit: 3 },
+    { label: '임신 등급', key: 'safety_profile.pregnancy_category' },
+    { label: '수유 안전성', key: 'safety_profile.breastfeeding_safety' },
+    { label: '중독 위험도', key: 'safety_profile.addiction_risk' }
+  ], data.products);
+  
+  // Safety scores
+  html += `
+    <tr class="bg-blue-50">
+      <td class="px-3 py-2 font-semibold text-gray-700 sticky left-0 bg-blue-50" colspan="${data.products.length + 1}">
+        안전 점수
+      </td>
+    </tr>
+  `;
+  
+  data.products.forEach((product, index) => {
+    if (product.safety_score) {
+      const gradeColors = {
+        green: 'bg-green-100 text-green-800',
+        light_green: 'bg-green-50 text-green-700',
+        yellow: 'bg-yellow-100 text-yellow-800',
+        red: 'bg-red-100 text-red-800'
+      };
+      
+      const gradeClass = gradeColors[product.safety_score.grade] || 'bg-gray-100 text-gray-800';
+      
+      if (index === 0) {
+        html += `<tr><td class="px-3 py-2 text-gray-700 sticky left-0 bg-white">총점</td>`;
+      }
+      
+      html += `
+        <td class="px-3 py-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-lg font-bold text-gray-900">${product.safety_score.total}</span>
+            <span class="px-2 py-1 rounded text-xs font-semibold ${gradeClass}">
+              ${product.safety_score.grade.toUpperCase()}
+            </span>
+          </div>
+          <div class="mt-1 text-xs text-gray-500">
+            허가: ${product.safety_score.regulatory} | 
+            효능: ${product.safety_score.efficacy} | 
+            안전: ${product.safety_score.safety} | 
+            유통: ${product.safety_score.distribution}
+          </div>
+        </td>
+      `;
+      
+      if (index === data.products.length - 1) {
+        html += '</tr>';
+      }
+    }
+  });
+  
+  html += `
+        </tbody>
+      </table>
+      </div>
+    </div>
+  `;
+  
+  resultsDiv.innerHTML = html;
+  resultsDiv.classList.remove('hidden');
+}
+
+function createComparisonSection(title, fields, products) {
+  let html = `
+    <tr class="bg-blue-50">
+      <td class="px-3 py-2 font-semibold text-gray-700 sticky left-0 bg-blue-50" colspan="${products.length + 1}">
+        ${title}
+      </td>
+    </tr>
+  `;
+  
+  fields.forEach(field => {
+    html += '<tr>';
+    html += `<td class="px-3 py-2 text-gray-700 sticky left-0 bg-white">${field.label}</td>`;
+    
+    products.forEach(product => {
+      let value = getNestedValue(product, field.key);
+      
+      if (field.isArray && Array.isArray(value)) {
+        value = value.slice(0, field.limit || 3).join(', ');
+      }
+      
+      if (value === null || value === undefined || value === '') {
+        value = '-';
+      }
+      
+      html += `<td class="px-3 py-2 text-gray-600">${value}</td>`;
+    });
+    
+    html += '</tr>';
+  });
+  
+  return html;
+}
+
+function getNestedValue(obj, path) {
+  return path.split('.').reduce((current, key) => current?.[key], obj);
+}
+
+function clearComparison() {
+  selectedProducts = [];
+  updateCompareButton();
+  document.getElementById('results').innerHTML = '';
+  document.getElementById('results').classList.add('hidden');
+  
+  // Uncheck all checkboxes
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.checked = false;
+  });
+}

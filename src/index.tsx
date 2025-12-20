@@ -223,6 +223,21 @@ app.get('/', (c) => {
                 </h3>
                 <div id="faqList" class="space-y-2"></div>
             </div>
+
+            <!-- Comparison Button (Fixed) -->
+            <div id="compareButtonContainer" class="fixed bottom-4 right-4 z-40 hidden">
+                <button 
+                    id="compareBtn" 
+                    onclick="compareProducts()" 
+                    disabled
+                    class="bg-blue-600 text-white px-4 py-3 rounded-lg shadow-lg text-sm font-bold opacity-50 cursor-not-allowed"
+                >
+                    <i class="fas fa-balance-scale mr-2"></i>제품 선택 (2-4개)
+                </button>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results" class="hidden"></div>
         </main>
 
         <!-- Footer - 축소 -->
