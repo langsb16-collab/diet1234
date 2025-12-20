@@ -30,13 +30,15 @@
 
 ## 🌐 URL
 
-### 개발 환경
-- **웹사이트**: https://3000-i3cf2ppqvjvdob3o4hgt8-a402f90a.sandbox.novita.ai
-- **API 엔드포인트**: https://3000-i3cf2ppqvjvdob3o4hgt8-a402f90a.sandbox.novita.ai/api
-- **헬스 체크**: https://3000-i3cf2ppqvjvdob3o4hgt8-a402f90a.sandbox.novita.ai/api/health
+### 프로덕션 환경
+- **커스텀 도메인**: https://puke365.net/
+- **Cloudflare Pages**: https://28f04c83.dietmed-global.pages.dev
+- **API 엔드포인트**: https://puke365.net/api
+- **헬스 체크**: https://puke365.net/api/health
+- **GitHub 저장소**: https://github.com/langsb16-collab/diet1234
 
-### 프로덕션 (배포 후)
-- **Cloudflare Pages**: `https://dietmed-global.pages.dev`
+### 개발 환경
+- **로컬 서버**: http://localhost:3000 (PM2로 실행)
 
 ---
 
@@ -423,15 +425,26 @@ curl https://dietmed-global.pages.dev/api/health
 
 ## 🚧 다음 단계
 
-⏳ GitHub 연동 및 원격 저장소 푸시  
-⏳ Cloudflare Pages 프로덕션 배포  
 ⏳ 실제 FDA/MFDS API 연동  
 ⏳ 제품 데이터 확장 (20-30개 제품)  
 ⏳ 알약 사진 인식 기능 추가  
-⏳ B2B API 개발 (판매처 검증 위젯)
+⏳ B2B API 개발 (판매처 검증 위젯)  
+⏳ 사용자 인증 시스템 (선택사항)  
+⏳ 제품 리뷰 및 평점 기능
 
 ---
 
-**Last Updated**: 2024-12-20  
-**Version**: 1.2.0  
-**Status**: ✅ Full Comparison Feature Complete
+## 🎉 배포 완료
+
+✅ **GitHub 저장소**: https://github.com/langsb16-collab/diet1234  
+✅ **Cloudflare Pages 배포**: https://28f04c83.dietmed-global.pages.dev  
+✅ **커스텀 도메인 연결**: https://puke365.net/  
+✅ **데이터베이스 마이그레이션**: D1 (SQLite) 적용 완료  
+✅ **시드 데이터**: 9개 제품, 30개 규제기관 데이터 삽입  
+✅ **API 엔드포인트**: 14개 API 정상 작동
+
+---
+
+**Last Updated**: 2025-12-20  
+**Version**: 1.3.0  
+**Status**: ✅ Production Deployed
