@@ -183,7 +183,7 @@ async function searchProducts() {
   
   resultsDiv.innerHTML = `
     <div class="text-center py-12">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
       <p class="text-gray-600">검색 중...</p>
     </div>
   `;
@@ -215,14 +215,14 @@ async function searchProducts() {
       const riskBadge = getRiskBadge(product.risk_level);
       const isSelected = selectedProducts.includes(product.product_id);
       html += `
-        <div class="border border-gray-200 rounded p-2 hover:shadow-md transition ${isSelected ? 'bg-blue-50 border-blue-400' : ''}">
+        <div class="border border-gray-200 rounded p-2 hover:shadow-md transition ${isSelected ? 'bg-orange-50 border-orange-400' : ''}">
           <div class="flex items-start space-x-2">
             <input 
               type="checkbox" 
               value="${product.product_id}"
               ${isSelected ? 'checked' : ''}
               onclick="event.stopPropagation(); toggleProductSelection('${product.product_id}')"
-              class="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+              class="mt-1 w-4 h-4 text-orange-600 rounded focus:ring-orange-500"
             />
             <div class="flex-1 cursor-pointer" onclick="viewProduct('${product.product_id}')">
               <div class="flex justify-between items-start mb-1">
@@ -238,7 +238,7 @@ async function searchProducts() {
                 <p><i class="fas fa-globe text-gray-400 mr-1"></i>${product.approval_count}개 국가 승인</p>
               </div>
               <div class="mt-2 text-right">
-                <button class="text-blue-600 hover:text-blue-700 text-xs font-semibold">
+                <button class="text-orange-600 hover:text-orange-700 text-xs font-semibold">
                   상세보기 <i class="fas fa-arrow-right ml-1"></i>
                 </button>
               </div>
@@ -287,7 +287,7 @@ async function scanBarcode() {
   
   resultDiv.innerHTML = `
     <div class="text-center py-12">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
       <p class="text-gray-600">제품 확인 중...</p>
     </div>
   `;
@@ -411,7 +411,7 @@ function displayScanResult(data) {
     <!-- Country Approvals - 축소 -->
     <div class="bg-white border rounded p-2 mb-2">
       <h4 class="text-xs font-bold text-gray-900 mb-2">
-        <i class="fas fa-globe text-blue-600 mr-1"></i>
+        <i class="fas fa-globe text-orange-600 mr-1"></i>
         국가별 허가 상태 (총 ${data.approvals.length}개국)
       </h4>
       
@@ -471,7 +471,7 @@ function displayScanResult(data) {
     <div class="flex space-x-2">
       <button 
         onclick="viewProduct('${data.product.product_id}')"
-        class="flex-1 bg-blue-600 text-white px-3 py-2 rounded text-xs font-semibold hover:bg-blue-700 transition"
+        class="flex-1 bg-orange-600 text-white px-3 py-2 rounded text-xs font-semibold hover:bg-orange-700 transition"
       >
         <i class="fas fa-info-circle mr-1"></i>상세
       </button>
@@ -543,7 +543,7 @@ function getRiskBadge(riskLevel) {
 
 function getSeverityIcon(severity) {
   const icons = {
-    low: '<i class="fas fa-info-circle text-blue-500"></i>',
+    low: '<i class="fas fa-info-circle text-orange-500"></i>',
     moderate: '<i class="fas fa-exclamation-circle text-yellow-500"></i>',
     high: '<i class="fas fa-exclamation-triangle text-orange-500"></i>',
     critical: '<i class="fas fa-ban text-red-600"></i>'
@@ -581,7 +581,7 @@ function displaySafetyScoreDetails(score) {
   return `
     <div class="bg-white border rounded p-3 space-y-2">
       <h4 class="text-xs font-bold text-gray-900 mb-2">
-        <i class="fas fa-chart-pie text-blue-600 mr-1"></i>
+        <i class="fas fa-chart-pie text-orange-600 mr-1"></i>
         안전 점수 세부사항
       </h4>
       
@@ -590,7 +590,7 @@ function displaySafetyScoreDetails(score) {
           <span class="text-xs text-gray-600">🔒 허가·정품성</span>
           <div class="flex items-center gap-1">
             <div class="w-20 bg-gray-200 rounded-full h-2">
-              <div class="bg-blue-600 h-2 rounded-full" style="width: ${(score.score_regulatory/35)*100}%"></div>
+              <div class="bg-orange-600 h-2 rounded-full" style="width: ${(score.score_regulatory/35)*100}%"></div>
             </div>
             <span class="text-xs font-semibold text-gray-900">${score.score_regulatory}/35</span>
           </div>
@@ -745,12 +745,12 @@ function updateCompareButton() {
   if (selectedProducts.length >= 2) {
     compareBtn.disabled = false;
     compareBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-    compareBtn.classList.add('hover:bg-blue-700');
+    compareBtn.classList.add('hover:bg-orange-700');
     compareBtn.innerHTML = `<i class="fas fa-balance-scale mr-2"></i>비교하기 (${selectedProducts.length}개)`;
   } else {
     compareBtn.disabled = true;
     compareBtn.classList.add('opacity-50', 'cursor-not-allowed');
-    compareBtn.classList.remove('hover:bg-blue-700');
+    compareBtn.classList.remove('hover:bg-orange-700');
     compareBtn.innerHTML = '<i class="fas fa-balance-scale mr-2"></i>제품 선택 (2-4개)';
   }
 }
@@ -789,7 +789,7 @@ function displayComparison(data) {
     <div class="bg-white rounded-lg shadow-sm p-4">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-bold text-gray-900">
-          <i class="fas fa-balance-scale mr-2 text-blue-600"></i>제품 비교
+          <i class="fas fa-balance-scale mr-2 text-orange-600"></i>제품 비교
         </h3>
         <button onclick="clearComparison()" class="text-sm text-gray-600 hover:text-gray-900">
           <i class="fas fa-times mr-1"></i>닫기
@@ -847,8 +847,8 @@ function displayComparison(data) {
   
   // Safety scores
   html += `
-    <tr class="bg-blue-50">
-      <td class="px-3 py-2 font-semibold text-gray-700 sticky left-0 bg-blue-50" colspan="${data.products.length + 1}">
+    <tr class="bg-orange-50">
+      <td class="px-3 py-2 font-semibold text-gray-700 sticky left-0 bg-orange-50" colspan="${data.products.length + 1}">
         안전 점수
       </td>
     </tr>
@@ -905,8 +905,8 @@ function displayComparison(data) {
 
 function createComparisonSection(title, fields, products) {
   let html = `
-    <tr class="bg-blue-50">
-      <td class="px-3 py-2 font-semibold text-gray-700 sticky left-0 bg-blue-50" colspan="${products.length + 1}">
+    <tr class="bg-orange-50">
+      <td class="px-3 py-2 font-semibold text-gray-700 sticky left-0 bg-orange-50" colspan="${products.length + 1}">
         ${title}
       </td>
     </tr>
