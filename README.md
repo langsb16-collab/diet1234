@@ -787,3 +787,59 @@ A: 월 1,000건까지 무료입니다. 간단 모드를 기본으로 사용하�
 - Production: `https://puke365.net/`
 - GitHub: `https://github.com/langsb16-collab/diet1234`
 
+
+### v2.0.3 (2025-12-20)
+#### 긴급 수정: 공지사항 등록 FK 제약조건 오류 해결
+**문제**: 관리자 페이지에서 공지사항 등록 시 `FOREIGN KEY constraint failed` 오류 발생
+
+**원인**: 
+- `notices` 테이블의 `author_id` 컬럼에 FOREIGN KEY 제약조건이 설정되어 있음
+- 관리자가 'admin'이라는 하드코딩된 ID로 공지를 등록하려 했지만, `users` 테이블에 해당 사용자가 존재하지 않음
+- SQLite의 FOREIGN KEY 제약조건으로 인해 INSERT 실패
+
+**해결**:
+1. 마이그레이션 파일 `0006_fix_notices_fk.sql` 생성
+2. `notices` 테이블 재생성 (FOREIGN KEY 제약조건 제거)
+3. `author_id`를 nullable로 변경
+4. 로컬 및 프로덕션 DB에 마이그레이션 적용
+
+**기술 상세**:
+```sql
+-- 이전 (오류 발생)
+CREATE TABLE notices (
+  ...
+  author_id TEXT NOT NULL,
+  ...
+  FOREIGN KEY (author_id) REFERENCES users(user_id) ON DELETE SET NULL
+);
+
+-- 수정 후 (정상 작동)
+CREATE TABLE notices (
+  ...
+  author_id TEXT,  -- nullable, FK 제거
+  ...
+);
+```
+
+**테스트**:
+- ✅ 로컬 환경: 공지 등록 성공
+- ✅ 프로덕션 환경: 공지 등록 성공 (https://puke365.net/api/admin/notices)
+- ✅ 관리자 페이지: 공지사항 등록 폼 정상 작동
+- ✅ 이미지 업로드: 정상 작동
+
+**배포**:
+- Latest: `https://a01b4164.dietmed-global.pages.dev`
+- Production: `https://puke365.net/`
+- GitHub: `https://github.com/langsb16-collab/diet1234`
+
+**로그**:
+```
+[로컬 테스트]
+POST /api/admin/notices
+{"success":true,"message":"공지사항이 등록되었습니다.","notice_id":"d26f3a85-3e20-44cd-8efa-66962f44ca3d"}
+
+[프로덕션 테스트]
+POST https://puke365.net/api/admin/notices
+{"success":true,"message":"공지사항이 등록되었습니다.","notice_id":"facbd7c2-a732-4b80-af2a-90d48b610cb8"}
+```
+
