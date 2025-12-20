@@ -14,8 +14,21 @@ import {
   getRiskLevel,
   getLegalitySummary
 } from '../types';
+import { auth } from './auth';
+import { admin } from './admin';
+import { notices } from './notices';
+import { requireAuth, requirePremium, limitFreeUser } from '../middleware/auth';
 
 export const apiRoutes = new Hono<{ Bindings: Env }>();
+
+// Mount authentication routes
+apiRoutes.route('/auth', auth);
+
+// Mount admin routes
+apiRoutes.route('/admin', admin);
+
+// Mount notices routes  
+apiRoutes.route('/notices', notices);
 
 // ============================================================================
 // Health Check
@@ -152,10 +165,10 @@ apiRoutes.get('/faqs', async (c) => {
 });
 
 // ============================================================================
-// Product Search
+// Product Search (로그인 필요, 무료 회원은 제목만)
 // ============================================================================
 
-apiRoutes.get('/products/search', async (c) => {
+apiRoutes.get('/products/search', requireAuth, limitFreeUser, async (c) => {
   try {
     const query = c.req.query('q') || '';
     const country = c.req.query('country') || '';
@@ -214,9 +227,22 @@ apiRoutes.get('/products/search', async (c) => {
     .bind(searchPattern, searchPattern, searchPattern)
     .first<{ count: number }>();
 
+    // 무료 회원은 제목만 반환
+    const limitedAccess = c.get('limitedAccess');
+    
+    let products = results.results as any[];
+    if (limitedAccess) {
+      products = products.map((p: any) => ({
+        product_id: p.product_id,
+        product_name: p.product_name,
+        upgrade_required: true
+      }));
+    }
+    
     const response: SearchResult = {
-      products: results.results as any[],
-      total: total?.count || 0
+      products,
+      total: total?.count || 0,
+      message: limitedAccess ? '프리미엄 회원으로 업그레이드하시면 상세 정보를 확인할 수 있습니다.' : undefined
     };
 
     return c.json(response);
@@ -227,10 +253,10 @@ apiRoutes.get('/products/search', async (c) => {
 });
 
 // ============================================================================
-// Product Detail
+// Product Detail (로그인 필요, 무료 회원은 제한된 정보만)
 // ============================================================================
 
-apiRoutes.get('/products/:id', async (c) => {
+apiRoutes.get('/products/:id', requireAuth, limitFreeUser, async (c) => {
   try {
     const productId = c.req.param('id');
     const country = c.req.query('country') || 'KR';
@@ -337,6 +363,23 @@ apiRoutes.get('/products/:id', async (c) => {
         icon: a.approval_status === 'approved' ? '✅' : '❌'
       };
     });
+
+    // 무료 회원은 제한된 정보만 반환
+    const limitedAccess = c.get('limitedAccess');
+    
+    if (limitedAccess) {
+      // 무료 회원: 제목과 기본 정보만
+      return c.json({
+        product: {
+          product_id: product.product_id,
+          product_name: product.product_name,
+          manufacturer_name: product.manufacturer_name,
+          dosage_form: product.dosage_form
+        },
+        message: '프리미엄 회원으로 업그레이드하시면 상세 정보를 확인할 수 있습니다.',
+        upgrade_required: true
+      });
+    }
 
     const response: ProductDetailResponse = {
       product: product as any,
@@ -631,10 +674,10 @@ apiRoutes.post('/reports', async (c) => {
 });
 
 // ============================================================================
-// Product Comparison
+// Product Comparison (프리미엄 회원 전용)
 // ============================================================================
 
-apiRoutes.get('/compare', async (c) => {
+apiRoutes.get('/compare', requireAuth, requirePremium, async (c) => {
   try {
     const { DB } = c.env;
     const productIds = c.req.query('products')?.split(',') || [];

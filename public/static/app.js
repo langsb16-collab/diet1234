@@ -1130,3 +1130,241 @@ function clearComparison() {
 
   });
 }
+
+
+// ============================================================================
+// Authentication & Membership System
+// ============================================================================
+
+// 로컬 스토리지에서 토큰 저장/가져오기
+function getAuthToken() {
+  return localStorage.getItem('auth_token');
+}
+
+function setAuthToken(token) {
+  localStorage.setItem('auth_token', token);
+}
+
+function removeAuthToken() {
+  localStorage.removeItem('auth_token');
+}
+
+function getUser() {
+  const userJson = localStorage.getItem('user');
+  return userJson ? JSON.parse(userJson) : null;
+}
+
+function setUser(user) {
+  localStorage.setItem('user', JSON.stringify(user));
+}
+
+function removeUser() {
+  localStorage.removeItem('user');
+}
+
+// UI 상태 업데이트
+function updateAuthUI() {
+  const user = getUser();
+  const loginBtn = document.getElementById('loginBtn');
+  const registerBtn = document.getElementById('registerBtn');
+  const userMenu = document.getElementById('userMenu');
+  
+  if (user) {
+    // 로그인 상태
+    loginBtn.classList.add('hidden');
+    registerBtn.classList.add('hidden');
+    userMenu.classList.remove('hidden');
+    
+    document.getElementById('userName').textContent = user.name;
+    const membership = document.getElementById('userMembership');
+    if (user.membership_type === 'premium') {
+      membership.textContent = '프리미엄';
+      membership.className = 'text-xs px-2 py-1 rounded-full bg-orange-500 text-white mr-2';
+    } else {
+      membership.textContent = '무료';
+      membership.className = 'text-xs px-2 py-1 rounded-full bg-gray-300 text-gray-700 mr-2';
+    }
+  } else {
+    // 로그아웃 상태
+    loginBtn.classList.remove('hidden');
+    registerBtn.classList.remove('hidden');
+    userMenu.classList.add('hidden');
+  }
+}
+
+// 로그인 모달 표시
+function showLogin() {
+  document.getElementById('loginModal').classList.remove('hidden');
+}
+
+function closeLogin() {
+  document.getElementById('loginModal').classList.add('hidden');
+}
+
+// 회원가입 모달 표시
+function showRegister() {
+  document.getElementById('registerModal').classList.remove('hidden');
+}
+
+function closeRegister() {
+  document.getElementById('registerModal').classList.add('hidden');
+}
+
+// 로그인 처리
+async function handleLogin(event) {
+  event.preventDefault();
+  const form = event.target;
+  const formData = new FormData(form);
+  
+  try {
+    const response = await axios.post('/api/auth/login', {
+      email: formData.get('email'),
+      password: formData.get('password')
+    });
+    
+    if (response.data.success) {
+      setAuthToken(response.data.token);
+      setUser(response.data.user);
+      updateAuthUI();
+      closeLogin();
+      alert('로그인되었습니다!');
+    }
+  } catch (error) {
+    alert(error.response?.data?.error || '로그인에 실패했습니다.');
+  }
+}
+
+// 회원가입 처리
+async function handleRegister(event) {
+  event.preventDefault();
+  const form = event.target;
+  const formData = new FormData(form);
+  
+  try {
+    const response = await axios.post('/api/auth/register', {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      phone: formData.get('phone'),
+      password: formData.get('password')
+    });
+    
+    if (response.data.success) {
+      alert('회원가입이 완료되었습니다! 로그인해주세요.');
+      closeRegister();
+      showLogin();
+    }
+  } catch (error) {
+    alert(error.response?.data?.error || '회원가입에 실패했습니다.');
+  }
+}
+
+// 로그아웃
+async function logout() {
+  try {
+    const token = getAuthToken();
+    if (token) {
+      await axios.post('/api/auth/logout', {}, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+    }
+  } catch (error) {
+    console.error('Logout error:', error);
+  } finally {
+    removeAuthToken();
+    removeUser();
+    updateAuthUI();
+    alert('로그아웃되었습니다.');
+  }
+}
+
+// 공지사항 표시
+async function showNotices() {
+  const noticeSection = document.getElementById('noticeSection');
+  noticeSection.classList.remove('hidden');
+  
+  try {
+    const response = await axios.get('/api/notices');
+    const notices = response.data.notices;
+    
+    const noticeList = document.getElementById('noticeList');
+    noticeList.innerHTML = notices.map(notice => `
+      <div class="border-b border-gray-200 pb-3 cursor-pointer hover:bg-orange-50 p-3 rounded-lg transition" onclick="showNoticeDetail('${notice.notice_id}')">
+        <h4 class="text-sm font-bold text-gray-900 mb-1">${notice.title}</h4>
+        <div class="flex justify-between items-center text-xs text-gray-500">
+          <span><i class="fas fa-calendar mr-1"></i>${new Date(notice.created_at).toLocaleDateString('ko-KR')}</span>
+          <span><i class="fas fa-eye mr-1"></i>${notice.view_count}</span>
+        </div>
+      </div>
+    `).join('');
+    
+    // 스크롤
+    noticeSection.scrollIntoView({ behavior: 'smooth' });
+  } catch (error) {
+    console.error('Notice error:', error);
+    alert('공지사항을 불러오는데 실패했습니다.');
+  }
+}
+
+// 공지사항 상세
+async function showNoticeDetail(noticeId) {
+  try {
+    const response = await axios.get(`/api/notices/${noticeId}`);
+    const notice = response.data.notice;
+    
+    document.getElementById('noticeDetailTitle').textContent = notice.title;
+    document.getElementById('noticeDetailDate').textContent = new Date(notice.created_at).toLocaleString('ko-KR');
+    document.getElementById('noticeDetailContent').innerHTML = notice.content.replace(/\n/g, '<br>');
+    
+    if (notice.image_url) {
+      document.getElementById('noticeDetailImage').innerHTML = `
+        <img src="${notice.image_url}" alt="Notice Image" class="w-full rounded-lg">
+      `;
+    } else {
+      document.getElementById('noticeDetailImage').innerHTML = '';
+    }
+    
+    document.getElementById('noticeDetailModal').classList.remove('hidden');
+  } catch (error) {
+    console.error('Notice detail error:', error);
+    alert('공지사항을 불러오는데 실패했습니다.');
+  }
+}
+
+function closeNoticeDetail() {
+  document.getElementById('noticeDetailModal').classList.add('hidden');
+}
+
+// API 요청 시 인증 토큰 자동 추가
+axios.interceptors.request.use(config => {
+  const token = getAuthToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, error => {
+  return Promise.reject(error);
+});
+
+// API 응답 인터셉터 (401 에러 처리)
+axios.interceptors.response.use(response => response, error => {
+  if (error.response?.status === 401) {
+    // 토큰 만료 또는 유효하지 않음
+    removeAuthToken();
+    removeUser();
+    updateAuthUI();
+    
+    if (error.response.data?.error) {
+      alert(error.response.data.error + ' 다시 로그인해주세요.');
+    }
+  } else if (error.response?.status === 403 && error.response.data?.upgrade_required) {
+    // 프리미엄 전용 기능
+    alert('프리미엄 회원 전용 기능입니다. 업그레이드를 원하시면 관리자에게 문의해주세요.');
+  }
+  return Promise.reject(error);
+});
+
+// 페이지 로드 시 인증 상태 확인
+document.addEventListener('DOMContentLoaded', () => {
+  updateAuthUI();
+});
+

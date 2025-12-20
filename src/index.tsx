@@ -19,6 +19,70 @@ app.use(renderer);
 // Mount API routes
 app.route('/api', apiRoutes);
 
+// Admin page (URL only access - No login required)
+// **Security Warning**: Anyone with this URL can access admin panel!
+// Access URL: https://puke365.net/secret-admin-panel-xyz123
+app.get('/secret-admin-panel-xyz123', (c) => {
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>DietMed Global - 관리자 페이지</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    </head>
+    <body class="bg-gray-100">
+        <div class="max-w-7xl mx-auto p-6">
+            <h1 class="text-3xl font-bold text-gray-900 mb-6">
+                <i class="fas fa-shield-alt text-orange-600 mr-2"></i>
+                DietMed Global - 관리자 페이지
+            </h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-users text-blue-600 mr-2"></i>회원 관리
+                    </h2>
+                    <div class="space-y-2">
+                        <button onclick="loadUsers('free')" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                            무료 회원 목록
+                        </button>
+                        <button onclick="loadUsers('premium')" class="w-full bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition">
+                            프리미엄 회원 목록
+                        </button>
+                        <button onclick="loadUsers()" class="w-full bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition">
+                            전체 회원 목록
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-bullhorn text-green-600 mr-2"></i>공지사항 관리
+                    </h2>
+                    <div class="space-y-2">
+                        <button onclick="showCreateNotice()" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                            공지사항 등록
+                        </button>
+                        <button onclick="loadNotices()" class="w-full bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition">
+                            공지사항 목록
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="adminContent" class="bg-white rounded-lg shadow p-6"></div>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
+        <script src="/static/admin.js"></script>
+    </body>
+    </html>
+  `);
+});
+
 // Home page
 app.get('/', (c) => {
   return c.html(`
@@ -189,9 +253,33 @@ app.get('/', (c) => {
                             <p class="text-xs text-orange-700 hidden sm:block">의약품 검증 플랫폼</p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-3">
+                    <div class="flex items-center space-x-2">
+                        <!-- 공지 버튼 (진한 그레이) -->
+                        <button id="noticeBtn" class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 rounded-lg transition text-sm font-bold shadow-sm" onclick="showNotices()">
+                            <i class="fas fa-bullhorn mr-1"></i><span class="hidden sm:inline">공지</span>
+                        </button>
+                        
+                        <!-- 로그인 버튼 (진한 그레이) -->
+                        <button id="loginBtn" class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 rounded-lg transition text-sm font-bold shadow-sm" onclick="showLogin()">
+                            <i class="fas fa-sign-in-alt mr-1"></i><span class="hidden sm:inline">로그인</span>
+                        </button>
+                        
+                        <!-- 회원가입 버튼 (진한 그레이) -->
+                        <button id="registerBtn" class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 rounded-lg transition text-sm font-bold shadow-sm" onclick="showRegister()">
+                            <i class="fas fa-user-plus mr-1"></i><span class="hidden sm:inline">회원가입</span>
+                        </button>
+                        
+                        <!-- 로그인 후 사용자 메뉴 (숨김) -->
+                        <div id="userMenu" class="hidden">
+                            <span id="userName" class="text-sm font-bold text-orange-900 mr-2"></span>
+                            <span id="userMembership" class="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-700 mr-2"></span>
+                            <button id="logoutBtn" class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 rounded-lg transition text-sm font-bold shadow-sm" onclick="logout()">
+                                <i class="fas fa-sign-out-alt mr-1"></i><span class="hidden sm:inline">로그아웃</span>
+                            </button>
+                        </div>
+                        
                         <!-- 언어 드롭다운 -->
-                        <select id="langDropdown" class="text-white text-sm font-bold px-3 py-2 outline-none cursor-pointer" onchange="changeLanguage(this.value)">
+                        <select id="langDropdown" class="bg-gray-700 text-white text-sm font-bold px-3 py-2 rounded-lg outline-none cursor-pointer" onchange="changeLanguage(this.value)">
                             <option value="ko">🇰🇷 한국어</option>
                             <option value="en">🇺🇸 English</option>
                             <option value="zh">🇨🇳 中文</option>
@@ -202,9 +290,6 @@ app.get('/', (c) => {
                             <option value="es">🇪🇸 Español</option>
                             <option value="de">🇩🇪 Deutsch</option>
                         </select>
-                        <button id="searchBtn" class="px-3 py-2 text-sm text-orange-700 hover:bg-orange-100 rounded-lg transition">
-                            <i class="fas fa-search mr-1"></i><span class="hidden sm:inline">검색</span>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -368,6 +453,100 @@ app.get('/', (c) => {
 
             <!-- Results Section -->
             <div id="results" class="hidden"></div>
+            
+            <!-- Notice Section -->
+            <div id="noticeSection" class="hidden card compact-spacing">
+                <h3 class="text-lg font-bold text-orange-900 mb-4">
+                    <i class="fas fa-bullhorn text-orange-600 mr-2"></i>공지사항
+                </h3>
+                <div id="noticeList" class="space-y-3"></div>
+            </div>
+            
+            <!-- Notice Detail Modal -->
+            <div id="noticeDetailModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 id="noticeDetailTitle" class="text-xl font-bold text-gray-900"></h3>
+                            <button onclick="closeNoticeDetail()" class="text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-times text-2xl"></i>
+                            </button>
+                        </div>
+                        <div id="noticeDetailDate" class="text-sm text-gray-500 mb-4"></div>
+                        <div id="noticeDetailImage" class="mb-4"></div>
+                        <div id="noticeDetailContent" class="prose max-w-none"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Login Modal -->
+            <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                <div class="bg-white rounded-xl max-w-md w-full p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-sign-in-alt text-orange-600 mr-2"></i>로그인
+                    </h3>
+                    <form id="loginForm" onsubmit="handleLogin(event)">
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">이메일</label>
+                            <input type="email" name="email" required class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">비밀번호</label>
+                            <input type="password" name="password" required class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                        </div>
+                        <div class="flex space-x-3">
+                            <button type="submit" class="flex-1 bg-orange-600 text-white px-4 py-3 rounded-lg font-bold hover:bg-orange-700 transition">
+                                로그인
+                            </button>
+                            <button type="button" onclick="closeLogin()" class="flex-1 bg-gray-300 text-gray-700 px-4 py-3 rounded-lg font-bold hover:bg-gray-400 transition">
+                                취소
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Register Modal -->
+            <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                <div class="bg-white rounded-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-user-plus text-orange-600 mr-2"></i>회원가입
+                    </h3>
+                    <form id="registerForm" onsubmit="handleRegister(event)">
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">이름 <span class="text-red-500">*</span></label>
+                            <input type="text" name="name" required class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">이메일 <span class="text-red-500">*</span></label>
+                            <input type="email" name="email" required class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">휴대폰 <span class="text-red-500">*</span></label>
+                            <input type="tel" name="phone" required pattern="[0-9]{10,11}" placeholder="01012345678" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">비밀번호 <span class="text-red-500">*</span></label>
+                            <input type="password" name="password" required minlength="8" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                            <p class="text-xs text-gray-500 mt-1">8자 이상 입력해주세요</p>
+                        </div>
+                        <div class="mb-6">
+                            <label class="flex items-center">
+                                <input type="checkbox" required class="mr-2">
+                                <span class="text-sm text-gray-700">이용약관 및 개인정보처리방침에 동의합니다 <span class="text-red-500">*</span></span>
+                            </label>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button type="submit" class="flex-1 bg-orange-600 text-white px-4 py-3 rounded-lg font-bold hover:bg-orange-700 transition">
+                                가입하기
+                            </button>
+                            <button type="button" onclick="closeRegister()" class="flex-1 bg-gray-300 text-gray-700 px-4 py-3 rounded-lg font-bold hover:bg-gray-400 transition">
+                                취소
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </main>
 
         <!-- Footer -->
