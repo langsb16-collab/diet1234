@@ -843,3 +843,60 @@ POST https://puke365.net/api/admin/notices
 {"success":true,"message":"공지사항이 등록되었습니다.","notice_id":"facbd7c2-a732-4b80-af2a-90d48b610cb8"}
 ```
 
+
+### v2.0.4 (2025-12-20)
+#### 긴급 수정: 메인 화면 버튼 클릭 오류 해결 (DOM 로딩 타이밍 이슈)
+**문제**: 메인 화면의 스캔, 검색, 목록 버튼을 클릭해도 반응이 없는 오류
+
+**원인**: 
+- 이벤트 리스너가 `DOMContentLoaded` 밖에서 실행됨 (329-371번 라인)
+- DOM이 완전히 로드되기 전에 `getElementById()`가 실행되어 요소를 찾지 못함
+- 콘솔에 `Cannot read properties of null` 에러 발생
+- 이벤트 리스너가 등록되지 않아 버튼 클릭이 작동하지 않음
+
+**해결**:
+1. 모든 이벤트 리스너를 `DOMContentLoaded` 안으로 이동
+2. 각 요소에 null 체크 추가
+3. 이벤트 리스너 등록 전 요소 존재 확인
+
+**수정된 코드**:
+```javascript
+// ❌ 이전 (오류 발생)
+document.getElementById('scanBtn')?.addEventListener('click', () => {
+  // DOM이 준비되기 전에 실행되어 요소를 찾지 못함
+});
+
+// ✅ 수정 후 (정상 작동)
+window.addEventListener('DOMContentLoaded', () => {
+  const scanBtn = document.getElementById('scanBtn');
+  if (scanBtn) {
+    scanBtn.addEventListener('click', () => {
+      // DOM 준비 완료 후 실행
+    });
+  }
+});
+```
+
+**영향 받은 버튼**:
+- ✅ **스캔 버튼** (`#scanBtn`) - 바코드 스캔 섹션으로 이동
+- ✅ **검색 버튼** (`#searchBtn`) - 검색 섹션으로 스크롤
+- ✅ **목록 버튼** (`#listBtn`) - 전체 제품 목록 로드
+- ✅ **Enter 키** (검색 입력, 바코드 입력)
+
+**테스트**:
+- ✅ 로컬 환경: 모든 버튼 정상 작동
+- ✅ 프로덕션 환경: 모든 버튼 정상 작동
+- ✅ 콘솔 에러 없음
+- ✅ 이벤트 리스너 정상 등록
+
+**배포**:
+- Latest: `https://fcf603ad.dietmed-global.pages.dev`
+- Production: `https://puke365.net/`
+- GitHub: `https://github.com/langsb16-collab/diet1234`
+
+**주요 개선사항**:
+- DOM 로딩 타이밍 문제 완전 해결
+- 모든 이벤트 리스너를 하나의 `DOMContentLoaded` 블록으로 통합
+- Null 체크 추가로 안정성 향상
+- 콘솔 에러 완전 제거
+
