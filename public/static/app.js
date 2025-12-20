@@ -265,6 +265,13 @@ function changeLanguage(lang) {
   currentLang = lang;
   const t = translations[lang];
   
+  if (!t) {
+    console.error(`Translation not found for language: ${lang}`);
+    return;
+  }
+  
+  console.log(`🌍 Changing language to: ${lang}`);
+  
   // Update document language
   document.documentElement.lang = lang;
   
@@ -276,6 +283,7 @@ function changeLanguage(lang) {
   }
   
   // Update all translatable elements
+  let updatedCount = 0;
   document.querySelectorAll('[data-i18n]').forEach(element => {
     const key = element.getAttribute('data-i18n');
     if (t[key]) {
@@ -284,13 +292,22 @@ function changeLanguage(lang) {
       } else {
         element.innerHTML = t[key];
       }
+      updatedCount++;
+    } else {
+      console.warn(`Translation key not found: ${key}`);
     }
   });
   
-  console.log(`Language changed to: ${lang}`);
+  console.log(`✅ Language changed to ${lang}, updated ${updatedCount} elements`);
   
   // Store language preference
   localStorage.setItem('dietmed_lang', lang);
+  
+  // Update dropdown visual
+  const dropdown = document.getElementById('langDropdown');
+  if (dropdown) {
+    dropdown.value = lang;
+  }
 }
 
 // Load saved language preference

@@ -186,10 +186,11 @@ app.get('/', (c) => {
             #langDropdown {
                 background: #FFFFFF;
                 border: 1px solid #E5E5EA;
-                color: #1C1C1E !important;
+                color: #1C1C1E;
                 border-radius: 10px;
                 font-weight: 500;
                 transition: all 0.3s ease;
+                cursor: pointer;
             }
             
             #langDropdown:hover {
@@ -197,11 +198,22 @@ app.get('/', (c) => {
                 box-shadow: 0 2px 8px rgba(11, 28, 45, 0.1);
             }
             
+            #langDropdown:focus {
+                outline: none;
+                border-color: #0B1C2D;
+                box-shadow: 0 0 0 3px rgba(11, 28, 45, 0.1);
+            }
+            
             #langDropdown option {
                 background: white;
                 color: #1C1C1E;
                 font-weight: 500;
                 padding: 12px;
+            }
+            
+            #langDropdown option:checked {
+                background: #0B1C2D;
+                color: white;
             }
             
             /* 카드 스타일 - 명품 감성 */
