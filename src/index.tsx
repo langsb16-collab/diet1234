@@ -68,6 +68,23 @@ app.get('/', (c) => {
                 -webkit-overflow-scrolling: touch;
             }
             
+            /* RTL 지원 (아랍어) */
+            html[dir="rtl"] {
+                direction: rtl;
+            }
+            
+            html[dir="rtl"] .flex {
+                flex-direction: row-reverse;
+            }
+            
+            html[dir="rtl"] .text-left {
+                text-align: right;
+            }
+            
+            html[dir="rtl"] .text-right {
+                text-align: left;
+            }
+            
             /* 헤더 */
             .compact-header {
                 padding: 0.75rem 0;
@@ -179,6 +196,11 @@ app.get('/', (c) => {
                             <option value="en">🇺🇸 English</option>
                             <option value="zh">🇨🇳 中文</option>
                             <option value="ja">🇯🇵 日本語</option>
+                            <option value="vi">🇻🇳 Tiếng Việt</option>
+                            <option value="mn">🇲🇳 Монгол</option>
+                            <option value="ar">🇸🇦 العربية</option>
+                            <option value="es">🇪🇸 Español</option>
+                            <option value="de">🇩🇪 Deutsch</option>
                         </select>
                         <button id="searchBtn" class="px-3 py-2 text-sm text-orange-700 hover:bg-orange-100 rounded-lg transition">
                             <i class="fas fa-search mr-1"></i><span class="hidden sm:inline">검색</span>
