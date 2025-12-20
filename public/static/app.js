@@ -1472,12 +1472,6 @@ function closeRegister() {
   }
 }
 
-// 전역 함수로 명시적 노출 (인라인 onclick에서 호출 가능하도록)
-window.showLogin = showLogin;
-window.closeLogin = closeLogin;
-window.showRegister = showRegister;
-window.closeRegister = closeRegister;
-
 // 로그인 처리
 async function handleLogin(event) {
   event.preventDefault();

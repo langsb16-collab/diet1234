@@ -229,9 +229,6 @@ async function handleCreateNotice(event) {
     }
   }
 }
-window.handleCreateNotice = handleCreateNotice;
-window.loadNotices = loadNotices;
-window.deleteNotice = deleteNotice;
 
 async function loadNotices() {
   try {
