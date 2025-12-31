@@ -356,11 +356,11 @@ app.get('/', (c) => {
                         바코드 스캔으로 즉시 확인하는<br>
                         국가별 허가 상태 · 위조 위험 · 합법 구매처
                     </p>
-                    <div style="display: flex; gap: 16px; justify-content: center;">
-                        <button id="scanBtn" style="background: #FFFFFF; color: #0B1C2D; padding: 18px 48px; border-radius: 12px; font-weight: 700; font-size: 18px; border: none; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.15); transition: all 0.2s ease; min-width: 180px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(0,0,0,0.15)'">
+                    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: nowrap;">
+                        <button id="scanBtn" style="background: #FF6B35; color: #FFFFFF; padding: 18px 48px; border-radius: 12px; font-weight: 700; font-size: 18px; border: none; cursor: pointer; box-shadow: 0 4px 16px rgba(255,107,53,0.3); transition: all 0.2s ease; min-width: 180px;" onmouseover="this.style.background='#FF8C5A'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(255,107,53,0.4)'" onmouseout="this.style.background='#FF6B35'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(255,107,53,0.3)'">
                             <i class="fas fa-camera" style="margin-right: 8px;"></i><span data-i18n="btn_scan">스캔</span>
                         </button>
-                        <button id="listBtn" style="background: rgba(255,255,255,0.2); color: white; padding: 18px 48px; border-radius: 12px; font-weight: 700; font-size: 18px; border: 2px solid rgba(255,255,255,0.4); cursor: pointer; backdrop-filter: blur(10px); transition: all 0.2s ease; min-width: 180px;" onmouseover="this.style.background='rgba(255,255,255,0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'; this.style.transform='translateY(0)'">
+                        <button id="listBtn" style="background: #FFFFFF; color: #0B1C2D; padding: 18px 48px; border-radius: 12px; font-weight: 700; font-size: 18px; border: 2px solid #E5E5EA; cursor: pointer; transition: all 0.2s ease; min-width: 180px;" onmouseover="this.style.background='#F0F0F0'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.1)'" onmouseout="this.style.background='#FFFFFF'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
                             <i class="fas fa-list" style="margin-right: 8px;"></i><span data-i18n="btn_list">목록</span>
                         </button>
                     </div>
@@ -373,8 +373,7 @@ app.get('/', (c) => {
                     main > div:first-child { padding: 32px 24px !important; }
                     main > div:first-child h2 { font-size: 24px !important; }
                     main > div:first-child p { font-size: 16px !important; margin-bottom: 24px !important; }
-                    main > div:first-child > div > div { flex-direction: column !important; }
-                    main > div:first-child button { width: 100% !important; min-width: unset !important; padding: 16px 32px !important; font-size: 16px !important; }
+                    main > div:first-child button { min-width: 140px !important; padding: 16px 32px !important; font-size: 16px !important; }
                 }
             </style>
 
