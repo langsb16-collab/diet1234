@@ -320,14 +320,7 @@ app.get('/', (c) => {
                             <i class="fas fa-user-plus" style="margin-right: 4px;"></i><span class="hidden sm:inline">회원가입</span>
                         </button>
                         
-                        <!-- 로그인 후 사용자 메뉴 (숨김) -->
-                        <div id="userMenu" class="hidden" style="display: flex; align-items: center; gap: 8px; flex-wrap: nowrap;">
-                            <span id="userName" style="font-size: 14px; font-weight: 600; color: #1C1C1E; white-space: nowrap;"></span>
-                            <span id="userMembership" style="font-size: 12px; padding: 4px 12px; border-radius: 12px; background: #FF6B35; color: white; font-weight: 600; white-space: nowrap;"></span>
-                            <button id="logoutBtn" style="background: #0B1C2D; color: white; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(11,28,45,0.2); transition: all 0.2s ease; white-space: nowrap;" onmouseover="this.style.background='#1A3A52'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#0B1C2D'; this.style.transform='translateY(0)'" onclick="logout()">
-                                <i class="fas fa-sign-out-alt" style="margin-right: 4px;"></i><span class="hidden sm:inline">로그아웃</span>
-                            </button>
-                        </div>
+
                         
                         <!-- 언어 드롭다운 -->
                         <select id="langDropdown" style="background: #FF6B35; color: white; font-size: 14px; font-weight: 600; padding: 8px 12px; border-radius: 8px; border: none; outline: none; cursor: pointer; box-shadow: 0 2px 8px rgba(255,107,53,0.2); white-space: nowrap;" onchange="changeLanguage(this.value)">
@@ -347,7 +340,7 @@ app.get('/', (c) => {
         </header>
 
         <!-- Main Content -->
-        <main style="max-width: 900px; margin: 0 auto; padding: 24px; padding-bottom: 80px;">
+        <main style="max-width: 900px; margin: 0 auto; padding: 8px 24px 80px 24px;">
             <!-- Hero Section -->
             <div style="background: linear-gradient(135deg, #0B1C2D 0%, #1A3A52 100%); color: white; border-radius: 20px; padding: 48px; margin-bottom: 24px; box-shadow: 0 10px 40px rgba(11, 28, 45, 0.2);">
                 <div style="text-align: center; max-width: 700px; margin: 0 auto;">
