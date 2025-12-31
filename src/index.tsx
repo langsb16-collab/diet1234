@@ -171,9 +171,21 @@ app.get('/', (c) => {
                 text-align: left;
             }
             
+            /* 상단 흰색 여백 줄이기 */
+            header, .top-area, .nav-wrap {
+                margin-top: 0 !important;
+                padding-top: 8px !important;
+                padding-bottom: 4px !important;
+            }
+            
+            /* 페이지 전체 상단 여백 축소 */
+            body {
+                padding-top: 0 !important;
+            }
+            
             /* 헤더 */
             .compact-header {
-                padding: 1rem 0;
+                padding: 8px 0 4px 0;
                 background: rgba(250, 250, 247, 0.95);
                 backdrop-filter: blur(10px);
                 -webkit-backdrop-filter: blur(10px);
@@ -186,20 +198,33 @@ app.get('/', (c) => {
                 margin-bottom: 1rem;
             }
             
-            /* 언어 드롭다운 */
-            #langDropdown {
-                background: #FFFFFF;
-                border: 1px solid #E5E5EA;
-                color: #1C1C1E;
-                border-radius: 10px;
-                font-weight: 500;
+            /* 언어 드롭박스 스타일 */
+            #langDropdown, .lang-select {
+                background: #00223a !important;
+                color: #ffffff;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 14px;
+                font-weight: 600;
                 transition: all 0.3s ease;
                 cursor: pointer;
             }
             
-            #langDropdown:hover {
-                border-color: #0B1C2D;
-                box-shadow: 0 2px 8px rgba(11, 28, 45, 0.1);
+            @media (max-width: 768px) {
+                .nav-wrap {
+                    justify-content: center;
+                    margin-top: 0;
+                    padding-top: 5px;
+                }
+                
+                #langDropdown, .lang-select {
+                    width: 48%;
+                    text-align: center;
+                }
+            }
+            
+            #langDropdown:hover, .lang-select:hover {
+                background: #003355 !important;
             }
             
             #langDropdown:focus {
