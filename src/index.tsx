@@ -347,18 +347,18 @@ app.get('/', (c) => {
         <!-- Main Content -->
         <main class="max-w-7xl mx-auto px-3 py-3 sm:px-6 pb-20">
             <!-- Hero Section - 명품 감성 -->
-            <div class="card p-6 mb-4 compact-spacing" style="background: linear-gradient(135deg, #0B1C2D 0%, #1A3A52 100%); color: white;">
-                <h2 class="text-lg font-bold mb-2" data-i18n="hero_title" style="letter-spacing: -0.03em;">안전한 다이어트 의약품 선택</h2>
-                <p class="text-sm mb-4 opacity-90" data-i18n="hero_subtitle" style="font-weight: 400; line-height: 1.6;">
+            <div class="card p-6 sm:p-8 mb-4 compact-spacing" style="background: linear-gradient(135deg, #0B1C2D 0%, #1A3A52 100%); color: white;">
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4" data-i18n="hero_title" style="letter-spacing: -0.03em;">안전한 다이어트 의약품 선택</h2>
+                <p class="text-sm sm:text-base mb-5 sm:mb-6 opacity-90" data-i18n="hero_subtitle" style="font-weight: 400; line-height: 1.6;">
                     바코드 스캔으로 즉시 확인하는<br>
                     국가별 허가 상태 · 위조 위험 · 합법 구매처
                 </p>
-                <div class="flex space-x-3">
-                    <button id="scanBtn" class="flex-1 px-5 py-3 rounded-xl font-semibold shadow-lg transition" style="background: white; color: #0B1C2D;" onmouseover="this.style.background='#FAFAF7'" onmouseout="this.style.background='white'">
-                        <i class="fas fa-camera mr-2"></i><span data-i18n="btn_scan">스캔</span>
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    <button id="scanBtn" class="flex-1 px-6 py-4 sm:py-3 rounded-xl font-bold text-base sm:text-lg shadow-lg transition" style="background: white; color: #0B1C2D; min-height: 52px;" onmouseover="this.style.background='#FAFAF7'; this.style.transform='scale(1.02)'" onmouseout="this.style.background='white'; this.style.transform='scale(1)'">
+                        <i class="fas fa-camera mr-2 text-lg"></i><span data-i18n="btn_scan" class="font-bold">스캔</span>
                     </button>
-                    <button class="flex-1 px-5 py-3 rounded-xl font-semibold transition" style="background: rgba(255,255,255,0.2); color: white; backdrop-filter: blur(10px);" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
-                        <i class="fas fa-list mr-2"></i><span data-i18n="btn_list">목록</span>
+                    <button id="listBtn" class="flex-1 px-6 py-4 sm:py-3 rounded-xl font-bold text-base sm:text-lg transition" style="background: rgba(255,255,255,0.2); color: white; backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.3); min-height: 52px;" onmouseover="this.style.background='rgba(255,255,255,0.35)'; this.style.borderColor='rgba(255,255,255,0.5)'; this.style.transform='scale(1.02)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'; this.style.borderColor='rgba(255,255,255,0.3)'; this.style.transform='scale(1)'">
+                        <i class="fas fa-list mr-2 text-lg"></i><span data-i18n="btn_list" class="font-bold">목록</span>
                     </button>
                 </div>
             </div>
@@ -376,20 +376,23 @@ app.get('/', (c) => {
                 </h3>
                 
                 <!-- 텍스트 검색 -->
-                <div class="flex space-x-2 mb-3">
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-3">
                     <input 
                         type="text" 
                         id="searchInput"
                         placeholder="제품명 입력 (예: Wegovy)"
                         data-i18n="search_placeholder"
-                        class="flex-1 px-4 py-3 text-sm rounded-lg"
+                        class="flex-1 px-4 py-3 sm:py-3 text-sm sm:text-base rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition"
+                        style="min-height: 48px;"
                     >
                     <button 
+                        id="searchBtn"
                         onclick="searchProducts()"
-                        class="btn-primary px-5 py-3 rounded-lg font-semibold shadow-md"
+                        class="btn-primary px-6 py-3 sm:py-3 rounded-lg font-bold text-base shadow-md whitespace-nowrap"
                         data-i18n="btn_search"
+                        style="min-height: 48px; min-width: 100px;"
                     >
-                        검색
+                        <i class="fas fa-search mr-2"></i>검색
                     </button>
                 </div>
                 
@@ -457,13 +460,15 @@ app.get('/', (c) => {
                         id="barcodeInput"
                         placeholder="바코드 번호 (예: 0169-4517-02)"
                         data-i18n="barcode_placeholder"
-                        class="w-full px-4 py-3 text-sm rounded-lg"
+                        class="w-full px-4 py-3 sm:py-3 text-sm sm:text-base rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition"
+                        style="min-height: 48px;"
                     >
                     <button 
                         onclick="scanBarcode()"
-                        class="btn-primary w-full px-4 py-3 rounded-lg font-semibold shadow-md"
+                        class="btn-primary w-full px-6 py-4 sm:py-3 rounded-lg font-bold text-base shadow-md"
+                        style="min-height: 52px;"
                     >
-                        <i class="fas fa-search mr-2"></i><span data-i18n="btn_verify">제품 확인</span>
+                        <i class="fas fa-search mr-2 text-lg"></i><span data-i18n="btn_verify" class="font-bold">제품 확인</span>
                     </button>
                 </div>
                 <div id="scanResult" class="mt-4"></div>
