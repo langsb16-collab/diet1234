@@ -135,7 +135,7 @@ app.get('/', (c) => {
             body { 
                 font-size: 15px;
                 line-height: 1.6;
-                background: linear-gradient(135deg, #0B1C2D 0%, #1A3A52 100%);
+                background: #FAFAF7;
                 color: #1C1C1E;
                 overflow-x: hidden;
                 font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
@@ -144,7 +144,6 @@ app.get('/', (c) => {
             
             @media (max-width: 640px) {
                 body { 
-                    background: #FAFAF7;
                     font-size: 14px; 
                 }
             }
@@ -348,35 +347,34 @@ app.get('/', (c) => {
         </header>
 
         <!-- Main Content -->
-        <main class="mx-auto px-4 py-6 pb-20" style="max-width: 900px;">
-            <!-- Hero Section - PC 중앙 정렬 / 모바일 전체 -->
-            <div class="card mb-6" style="background: linear-gradient(135deg, #0B1C2D 0%, #1A3A52 100%); color: white; border-radius: 20px; padding: 48px 40px; box-shadow: 0 20px 60px rgba(11, 28, 45, 0.3);">
-                <div style="text-align: center;">
-                    <h2 class="font-bold mb-4" data-i18n="hero_title" style="font-size: 32px; letter-spacing: -0.03em; line-height: 1.2;">안전한 다이어트 의약품 선택</h2>
-                    <p class="mb-8 opacity-90" data-i18n="hero_subtitle" style="font-size: 18px; font-weight: 400; line-height: 1.6;">
+        <main style="max-width: 900px; margin: 0 auto; padding: 24px; padding-bottom: 80px;">
+            <!-- Hero Section -->
+            <div style="background: linear-gradient(135deg, #0B1C2D 0%, #1A3A52 100%); color: white; border-radius: 20px; padding: 48px; margin-bottom: 24px; box-shadow: 0 10px 40px rgba(11, 28, 45, 0.2);">
+                <div style="text-align: center; max-width: 700px; margin: 0 auto;">
+                    <h2 data-i18n="hero_title" style="font-size: 36px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.02em; line-height: 1.2;">안전한 다이어트 의약품 선택</h2>
+                    <p data-i18n="hero_subtitle" style="font-size: 18px; opacity: 0.95; margin-bottom: 32px; line-height: 1.6;">
                         바코드 스캔으로 즉시 확인하는<br>
                         국가별 허가 상태 · 위조 위험 · 합법 구매처
                     </p>
-                    <div style="display: flex; gap: 16px; max-width: 600px; margin: 0 auto;">
-                        <button id="scanBtn" style="flex: 1; background: white; color: #0B1C2D; padding: 20px 32px; border-radius: 16px; font-weight: 700; font-size: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); border: none; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 32px rgba(0,0,0,0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.15)'">
-                            <i class="fas fa-camera" style="font-size: 20px; margin-right: 8px;"></i><span data-i18n="btn_scan">스캔</span>
+                    <div style="display: flex; gap: 16px; justify-content: center;">
+                        <button id="scanBtn" style="background: #FFFFFF; color: #0B1C2D; padding: 18px 48px; border-radius: 12px; font-weight: 700; font-size: 18px; border: none; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.15); transition: all 0.2s ease; min-width: 180px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(0,0,0,0.15)'">
+                            <i class="fas fa-camera" style="margin-right: 8px;"></i><span data-i18n="btn_scan">스캔</span>
                         </button>
-                        <button id="listBtn" style="flex: 1; background: rgba(255,255,255,0.25); color: white; padding: 20px 32px; border-radius: 16px; font-weight: 700; font-size: 18px; border: 2px solid rgba(255,255,255,0.4); backdrop-filter: blur(10px); cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.35)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255,255,255,0.25)'; this.style.transform='translateY(0)'">
-                            <i class="fas fa-list" style="font-size: 20px; margin-right: 8px;"></i><span data-i18n="btn_list">목록</span>
+                        <button id="listBtn" style="background: rgba(255,255,255,0.2); color: white; padding: 18px 48px; border-radius: 12px; font-weight: 700; font-size: 18px; border: 2px solid rgba(255,255,255,0.4); cursor: pointer; backdrop-filter: blur(10px); transition: all 0.2s ease; min-width: 180px;" onmouseover="this.style.background='rgba(255,255,255,0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'; this.style.transform='translateY(0)'">
+                            <i class="fas fa-list" style="margin-right: 8px;"></i><span data-i18n="btn_list">목록</span>
                         </button>
                     </div>
                 </div>
             </div>
             
-            <!-- 모바일 전용 스타일 -->
             <style>
-                @media (max-width: 640px) {
+                @media (max-width: 768px) {
                     main { padding: 16px !important; }
-                    .card { padding: 24px 20px !important; }
-                    h2 { font-size: 22px !important; }
-                    p { font-size: 15px !important; margin-bottom: 32px !important; }
-                    button { padding: 16px 24px !important; font-size: 16px !important; }
-                    button i { font-size: 18px !important; }
+                    main > div:first-child { padding: 32px 24px !important; }
+                    main > div:first-child h2 { font-size: 24px !important; }
+                    main > div:first-child p { font-size: 16px !important; margin-bottom: 24px !important; }
+                    main > div:first-child > div > div { flex-direction: column !important; }
+                    main > div:first-child button { width: 100% !important; min-width: unset !important; padding: 16px 32px !important; font-size: 16px !important; }
                 }
             </style>
 
