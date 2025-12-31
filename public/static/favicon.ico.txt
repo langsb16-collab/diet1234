@@ -1,0 +1,1 @@
+이 파일은 placeholder입니다. 실제 favicon.ico는 별도로 생성해야 합니다.

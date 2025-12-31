@@ -46,6 +46,7 @@ app.get('/secret-admin-panel-xyz123', (c) => {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>DietMed Global - 관리자 페이지</title>
+        <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
         <link href="/static/styles.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
     </head>
@@ -108,6 +109,7 @@ app.get('/', (c) => {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>DietMed Global - 다이어트 의약품 검증 플랫폼</title>
+        <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
         <link href="/static/styles.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
         <style>
