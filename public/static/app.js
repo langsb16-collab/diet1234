@@ -1559,12 +1559,7 @@ async function showNotices() {
     return;
   }
   
-  // Hide features and stats sections when showing notices
-  const featuresSection = document.getElementById('featuresSection');
-  const statsSection = document.getElementById('statsSection');
-  if (featuresSection) featuresSection.classList.add('hidden');
-  if (statsSection) statsSection.classList.add('hidden');
-  
+  // Show modal
   noticeSection.classList.remove('hidden');
   
   try {
@@ -1590,9 +1585,6 @@ async function showNotices() {
         </div>
       `).join('');
     }
-    
-    // 스크롤
-    noticeSection.scrollIntoView({ behavior: 'smooth' });
   } catch (error) {
     console.error('Notice error:', error);
     alert('공지사항을 불러오는데 실패했습니다: ' + (error.response?.data?.error || error.message));
@@ -1716,13 +1708,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// Close notices section
+// Close notices modal
 function closeNotices() {
   const noticeSection = document.getElementById('noticeSection');
-  const featuresSection = document.getElementById('featuresSection');
-  const statsSection = document.getElementById('statsSection');
-  
   if (noticeSection) noticeSection.classList.add('hidden');
-  if (featuresSection) featuresSection.classList.remove('hidden');
-  if (statsSection) statsSection.classList.remove('hidden');
 }

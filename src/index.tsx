@@ -620,17 +620,19 @@ app.get('/', (c) => {
             <!-- Results Section -->
             <div id="results" class="hidden"></div>
             
-            <!-- Notice Section -->
-            <div id="noticeSection" class="hidden card compact-spacing">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-bold" style="color: #1C1C1E;">
-                        <i class="fas fa-bullhorn mr-2" style="color: #0B1C2D;"></i>공지사항
-                    </h3>
-                    <button onclick="closeNotices()" class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
+            <!-- Notice Modal -->
+            <div id="noticeSection" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                <div class="rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6" style="background: #FAFAF7;">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold" style="color: #1C1C1E;">
+                            <i class="fas fa-bullhorn mr-2" style="color: #0B1C2D;"></i>공지사항
+                        </h3>
+                        <button onclick="closeNotices()" style="color: #6E6E73;" onmouseover="this.style.color='#1C1C1E'" onmouseout="this.style.color='#6E6E73'">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                    <div id="noticeList" class="space-y-3"></div>
                 </div>
-                <div id="noticeList" class="space-y-3"></div>
             </div>
             
             <!-- Notice Detail Modal -->
