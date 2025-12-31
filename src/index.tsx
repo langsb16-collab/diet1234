@@ -304,33 +304,33 @@ app.get('/', (c) => {
                             <p class="text-xs hidden sm:block" style="color: #6E6E73; font-weight: 500;">의약품 검증 플랫폼</p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <!-- 공지 버튼 (디프 네이비) -->
-                        <button id="noticeBtn" class="text-white px-3 py-2 rounded-lg transition text-sm font-semibold shadow-sm" style="background: #0B1C2D;" onmouseover="this.style.background='#1A3A52'" onmouseout="this.style.background='#0B1C2D'" onclick="showNotices()">
-                            <i class="fas fa-bullhorn mr-1"></i><span class="hidden sm:inline">공지</span>
+                    <div class="flex items-center gap-2" style="flex-wrap: nowrap;">
+                        <!-- 공지 버튼 -->
+                        <button id="noticeBtn" style="background: #FF6B35; color: white; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(255,107,53,0.2); transition: all 0.2s ease; white-space: nowrap;" onmouseover="this.style.background='#FF8C5A'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#FF6B35'; this.style.transform='translateY(0)'" onclick="showNotices()">
+                            <i class="fas fa-bullhorn" style="margin-right: 4px;"></i><span class="hidden sm:inline">공지</span>
                         </button>
                         
-                        <!-- 로그인 버튼 (디프 네이비) -->
-                        <button id="loginBtn" class="text-white px-3 py-2 rounded-lg transition text-sm font-semibold shadow-sm" style="background: #0B1C2D;" onmouseover="this.style.background='#1A3A52'" onmouseout="this.style.background='#0B1C2D'" onclick="showLogin()">
-                            <i class="fas fa-sign-in-alt mr-1"></i><span class="hidden sm:inline">로그인</span>
+                        <!-- 로그인 버튼 -->
+                        <button id="loginBtn" style="background: #FF6B35; color: white; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(255,107,53,0.2); transition: all 0.2s ease; white-space: nowrap;" onmouseover="this.style.background='#FF8C5A'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#FF6B35'; this.style.transform='translateY(0)'" onclick="showLogin()">
+                            <i class="fas fa-sign-in-alt" style="margin-right: 4px;"></i><span class="hidden sm:inline">로그인</span>
                         </button>
                         
-                        <!-- 회원가입 버튼 (디프 네이비) -->
-                        <button id="registerBtn" class="text-white px-3 py-2 rounded-lg transition text-sm font-semibold shadow-sm" style="background: #0B1C2D;" onmouseover="this.style.background='#1A3A52'" onmouseout="this.style.background='#0B1C2D'" onclick="showRegister()">
-                            <i class="fas fa-user-plus mr-1"></i><span class="hidden sm:inline">회원가입</span>
+                        <!-- 회원가입 버튼 -->
+                        <button id="registerBtn" style="background: #FF6B35; color: white; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(255,107,53,0.2); transition: all 0.2s ease; white-space: nowrap;" onmouseover="this.style.background='#FF8C5A'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#FF6B35'; this.style.transform='translateY(0)'" onclick="showRegister()">
+                            <i class="fas fa-user-plus" style="margin-right: 4px;"></i><span class="hidden sm:inline">회원가입</span>
                         </button>
                         
                         <!-- 로그인 후 사용자 메뉴 (숨김) -->
-                        <div id="userMenu" class="hidden">
-                            <span id="userName" class="text-sm font-semibold mr-2" style="color: #1C1C1E;"></span>
-                            <span id="userMembership" class="text-xs px-2 py-1 rounded-full mr-2" style="background: #0B1C2D; color: white;"></span>
-                            <button id="logoutBtn" class="text-white px-3 py-2 rounded-lg transition text-sm font-semibold shadow-sm" style="background: #0B1C2D;" onmouseover="this.style.background='#1A3A52'" onmouseout="this.style.background='#0B1C2D'" onclick="logout()">
-                                <i class="fas fa-sign-out-alt mr-1"></i><span class="hidden sm:inline">로그아웃</span>
+                        <div id="userMenu" class="hidden" style="display: flex; align-items: center; gap: 8px; flex-wrap: nowrap;">
+                            <span id="userName" style="font-size: 14px; font-weight: 600; color: #1C1C1E; white-space: nowrap;"></span>
+                            <span id="userMembership" style="font-size: 12px; padding: 4px 12px; border-radius: 12px; background: #FF6B35; color: white; font-weight: 600; white-space: nowrap;"></span>
+                            <button id="logoutBtn" style="background: #0B1C2D; color: white; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(11,28,45,0.2); transition: all 0.2s ease; white-space: nowrap;" onmouseover="this.style.background='#1A3A52'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#0B1C2D'; this.style.transform='translateY(0)'" onclick="logout()">
+                                <i class="fas fa-sign-out-alt" style="margin-right: 4px;"></i><span class="hidden sm:inline">로그아웃</span>
                             </button>
                         </div>
                         
                         <!-- 언어 드롭다운 -->
-                        <select id="langDropdown" class="bg-gray-700 text-white text-sm font-bold px-3 py-2 rounded-lg outline-none cursor-pointer" onchange="changeLanguage(this.value)">
+                        <select id="langDropdown" style="background: #FF6B35; color: white; font-size: 14px; font-weight: 600; padding: 8px 12px; border-radius: 8px; border: none; outline: none; cursor: pointer; box-shadow: 0 2px 8px rgba(255,107,53,0.2); white-space: nowrap;" onchange="changeLanguage(this.value)">
                             <option value="ko">🇰🇷 한국어</option>
                             <option value="en">🇺🇸 English</option>
                             <option value="zh">🇨🇳 中文</option>
