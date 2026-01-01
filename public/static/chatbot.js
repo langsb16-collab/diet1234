@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
           <i class="fas fa-list-ul" style="color: #FF6B35; margin-right: 8px;"></i>
           ${data.faqTitle || 'FAQ'}
         </div>
-        ${data.qa.map((item, index) => `
+        ${data.qa.slice(0, 9).map((item, index) => `
           <div class="faq-item" onclick="window.showFAQAnswer(${index})" style="background: white; padding: 14px 16px; margin-bottom: 8px; border-radius: 12px; cursor: pointer; border: 1px solid #E5E5EA; transition: all 0.2s;">
             <div style="display: flex; align-items: center; justify-content: space-between;">
               <div style="flex: 1;">
