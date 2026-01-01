@@ -654,55 +654,59 @@ app.get('/', (c) => {
             </div>
             
             <!-- Login Modal -->
-            <div id="loginModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 16px;">
-                <div class="rounded-2xl max-w-md w-full p-6" style="background: #FAFAF7;">
-                    <h3 class="text-xl font-bold mb-4" style="color: #1C1C1E;">
-                        <i class="fas fa-sign-in-alt mr-2" style="color: #0B1C2D;"></i>로그인
+            <div id="loginModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px;">
+                <div style="background: white; border-radius: 16px; max-width: 500px; width: 100%; padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                    <h3 style="font-size: 24px; font-weight: bold; margin-bottom: 24px; color: #1C1C1E;">
+                        <i class="fas fa-sign-in-alt" style="color: #FF6B35; margin-right: 8px;"></i>로그인
                     </h3>
                     <form id="loginForm" onsubmit="handleLogin(event)">
-                        <div class="mb-4">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">이메일</label>
-                            <input type="email" name="email" required class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">이메일</label>
+                            <input type="email" name="email" required style="width: 100%; padding: 12px 16px; border: 2px solid #D1D5DB; border-radius: 8px; font-size: 16px; outline: none;" onfocus="this.style.borderColor='#FF6B35'" onblur="this.style.borderColor='#D1D5DB'">
                         </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">비밀번호</label>
-                            <input type="password" name="password" required class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                        <div style="margin-bottom: 24px;">
+                            <label style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">비밀번호</label>
+                            <input type="password" name="password" required style="width: 100%; padding: 12px 16px; border: 2px solid #D1D5DB; border-radius: 8px; font-size: 16px; outline: none;" onfocus="this.style.borderColor='#FF6B35'" onblur="this.style.borderColor='#D1D5DB'">
                         </div>
-                        <div class="flex space-x-3">
-                            <button type="submit" class="flex-1 bg-orange-600 text-white px-4 py-3 rounded-lg font-bold hover:bg-orange-700 transition">
-                                로그인
-                            </button>
-                            <button type="button" onclick="closeLogin()" class="flex-1 bg-gray-300 text-gray-700 px-4 py-3 rounded-lg font-bold hover:bg-gray-400 transition">
-                                취소
-                            </button>
+                        <div style="display: flex; gap: 12px;">
+                            <button type="submit" style="flex: 1; background: #FF6B35; color: white; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 16px; border: none; cursor: pointer;" onmouseover="this.style.background='#E55A2B'" onmouseout="this.style.background='#FF6B35'">로그인</button>
+                            <button type="button" onclick="closeLogin()" style="flex: 1; background: #E5E7EB; color: #374151; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 16px; border: none; cursor: pointer;" onmouseover="this.style.background='#D1D5DB'" onmouseout="this.style.background='#E5E7EB'">취소</button>
                         </div>
                     </form>
                 </div>
             </div>
             
             <!-- Register Modal -->
-            <div id="registerModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 16px;">
-                <div class="bg-white rounded-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">
-                        <i class="fas fa-user-plus text-orange-600 mr-2"></i>회원가입
+            <div id="registerModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px;">
+                <div style="background: white; border-radius: 16px; max-width: 500px; width: 100%; padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto;">
+                    <h3 style="font-size: 24px; font-weight: bold; margin-bottom: 24px; color: #1C1C1E;">
+                        <i class="fas fa-user-plus" style="color: #FF6B35; margin-right: 8px;"></i>회원가입
                     </h3>
                     <form id="registerForm" onsubmit="handleRegister(event)">
-                        <div class="mb-4">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">이름 <span class="text-red-500">*</span></label>
-                            <input type="text" name="name" required class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">이름 <span style="color: #EF4444;">*</span></label>
+                            <input type="text" name="name" required style="width: 100%; padding: 12px 16px; border: 2px solid #D1D5DB; border-radius: 8px; font-size: 16px; outline: none;" onfocus="this.style.borderColor='#FF6B35'" onblur="this.style.borderColor='#D1D5DB'">
                         </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">이메일 <span class="text-red-500">*</span></label>
-                            <input type="email" name="email" required class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">이메일 <span style="color: #EF4444;">*</span></label>
+                            <input type="email" name="email" required style="width: 100%; padding: 12px 16px; border: 2px solid #D1D5DB; border-radius: 8px; font-size: 16px; outline: none;" onfocus="this.style.borderColor='#FF6B35'" onblur="this.style.borderColor='#D1D5DB'">
                         </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">휴대폰 <span class="text-red-500">*</span></label>
-                            <input type="tel" name="phone" required pattern="[0-9]{10,11}" placeholder="01012345678" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">휴대폰 <span style="color: #EF4444;">*</span></label>
+                            <input type="tel" name="phone" required pattern="[0-9]{10,11}" placeholder="01012345678" style="width: 100%; padding: 12px 16px; border: 2px solid #D1D5DB; border-radius: 8px; font-size: 16px; outline: none;" onfocus="this.style.borderColor='#FF6B35'" onblur="this.style.borderColor='#D1D5DB'">
                         </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">비밀번호 <span class="text-red-500">*</span></label>
-                            <input type="password" name="password" required minlength="8" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none">
-                            <p class="text-xs text-gray-500 mt-1">8자 이상 입력해주세요</p>
+                        <div style="margin-bottom: 24px;">
+                            <label style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">비밀번호 <span style="color: #EF4444;">*</span></label>
+                            <input type="password" name="password" required minlength="8" style="width: 100%; padding: 12px 16px; border: 2px solid #D1D5DB; border-radius: 8px; font-size: 16px; outline: none;" onfocus="this.style.borderColor='#FF6B35'" onblur="this.style.borderColor='#D1D5DB'">
+                            <p style="font-size: 12px; color: #6B7280; margin-top: 4px;">8자 이상 입력해주세요</p>
+                        </div>
+                        <div style="display: flex; gap: 12px;">
+                            <button type="submit" style="flex: 1; background: #FF6B35; color: white; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 16px; border: none; cursor: pointer;" onmouseover="this.style.background='#E55A2B'" onmouseout="this.style.background='#FF6B35'">가입하기</button>
+                            <button type="button" onclick="closeRegister()" style="flex: 1; background: #E5E7EB; color: #374151; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 16px; border: none; cursor: pointer;" onmouseover="this.style.background='#D1D5DB'" onmouseout="this.style.background='#E5E7EB'">취소</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
                         </div>
                         <div class="mb-6">
                             <label class="flex items-center">
