@@ -121,21 +121,26 @@
 .lang-btn.active { background: rgba(255,255,255,0.4); }
 
 .btn-close {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border: none;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.3);
     color: white;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 24px;
+    font-weight: bold;
     transition: all 0.2s;
     display: flex !important;
     align-items: center;
     justify-content: center;
+    line-height: 1;
 }
 
-.btn-close:hover { background: rgba(255,255,255,0.3); }
+.btn-close:hover { 
+    background: rgba(255,255,255,0.5);
+    transform: scale(1.1);
+}
 
 .chat-messages {
     flex: 1;
