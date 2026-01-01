@@ -1449,7 +1449,6 @@ function updateAuthUI() {
 function showLogin() {
   const loginModal = document.getElementById('loginModal');
   if (loginModal) {
-    loginModal.classList.remove('hidden');
     loginModal.style.display = 'flex';
   } else {
     console.error('loginModal element not found');
@@ -1459,7 +1458,6 @@ function showLogin() {
 function closeLogin() {
   const loginModal = document.getElementById('loginModal');
   if (loginModal) {
-    loginModal.classList.add('hidden');
     loginModal.style.display = 'none';
   }
 }
@@ -1468,7 +1466,6 @@ function closeLogin() {
 function showRegister() {
   const registerModal = document.getElementById('registerModal');
   if (registerModal) {
-    registerModal.classList.remove('hidden');
     registerModal.style.display = 'flex';
   } else {
     console.error('registerModal element not found');
@@ -1478,7 +1475,6 @@ function showRegister() {
 function closeRegister() {
   const registerModal = document.getElementById('registerModal');
   if (registerModal) {
-    registerModal.classList.add('hidden');
     registerModal.style.display = 'none';
   }
 }
@@ -1564,7 +1560,6 @@ async function showNotices() {
   }
   
   // Show modal
-  noticeSection.classList.remove('hidden');
   noticeSection.style.display = 'flex';
   
   try {
@@ -1717,7 +1712,6 @@ document.addEventListener('DOMContentLoaded', () => {
 function closeNotices() {
   const noticeSection = document.getElementById('noticeSection');
   if (noticeSection) {
-    noticeSection.classList.add('hidden');
     noticeSection.style.display = 'none';
   }
 }
