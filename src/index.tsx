@@ -654,7 +654,7 @@ app.get('/', (c) => {
             </div>
             
             <!-- Login Modal -->
-            <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+            <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden" style="display: none; align-items: center; justify-content: center; padding: 16px;">
                 <div class="rounded-2xl max-w-md w-full p-6" style="background: #FAFAF7;">
                     <h3 class="text-xl font-bold mb-4" style="color: #1C1C1E;">
                         <i class="fas fa-sign-in-alt mr-2" style="color: #0B1C2D;"></i>로그인
@@ -681,7 +681,7 @@ app.get('/', (c) => {
             </div>
             
             <!-- Register Modal -->
-            <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+            <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden" style="display: none; align-items: center; justify-content: center; padding: 16px;">
                 <div class="bg-white rounded-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
                     <h3 class="text-xl font-bold text-gray-900 mb-4">
                         <i class="fas fa-user-plus text-orange-600 mr-2"></i>회원가입

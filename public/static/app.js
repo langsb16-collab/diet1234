@@ -1450,6 +1450,7 @@ function showLogin() {
   const loginModal = document.getElementById('loginModal');
   if (loginModal) {
     loginModal.classList.remove('hidden');
+    loginModal.style.display = 'flex';
   } else {
     console.error('loginModal element not found');
   }
@@ -1459,6 +1460,7 @@ function closeLogin() {
   const loginModal = document.getElementById('loginModal');
   if (loginModal) {
     loginModal.classList.add('hidden');
+    loginModal.style.display = 'none';
   }
 }
 
@@ -1467,6 +1469,7 @@ function showRegister() {
   const registerModal = document.getElementById('registerModal');
   if (registerModal) {
     registerModal.classList.remove('hidden');
+    registerModal.style.display = 'flex';
   } else {
     console.error('registerModal element not found');
   }
@@ -1476,6 +1479,7 @@ function closeRegister() {
   const registerModal = document.getElementById('registerModal');
   if (registerModal) {
     registerModal.classList.add('hidden');
+    registerModal.style.display = 'none';
   }
 }
 
@@ -1561,6 +1565,7 @@ async function showNotices() {
   
   // Show modal
   noticeSection.classList.remove('hidden');
+  noticeSection.style.display = 'flex';
   
   try {
     const response = await axios.get('/api/notices');
@@ -1711,5 +1716,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // Close notices modal
 function closeNotices() {
   const noticeSection = document.getElementById('noticeSection');
-  if (noticeSection) noticeSection.classList.add('hidden');
+  if (noticeSection) {
+    noticeSection.classList.add('hidden');
+    noticeSection.style.display = 'none';
+  }
 }
