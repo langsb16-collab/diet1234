@@ -687,7 +687,10 @@ function displaySearchResults(data) {
     resultsDiv.innerHTML = html;
     
     // Show comparison button if products found
-    document.getElementById('compareButtonContainer').classList.remove('hidden');
+    const compareBtn = document.getElementById('compareButtonContainer');
+    if (compareBtn) {
+      compareBtn.classList.remove('hidden');
+    }
     updateCompareButton();
 }
 
@@ -1084,6 +1087,10 @@ async function loadFAQs(ingredientId = null) {
     const faqSection = document.getElementById('faqSection');
     const faqList = document.getElementById('faqList');
     
+    if (!faqSection || !faqList) {
+      console.error('FAQ elements not found');
+      return;
+    }
     let html = '';
     faqs.forEach((faq, index) => {
       const categoryColors = {
