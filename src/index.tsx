@@ -824,9 +824,9 @@ app.get('/', (c) => {
         </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
+        <script src="/static/app.js"></script>
         <script src="/static/chatbot-data.js"></script>
         <script src="/static/chatbot.js"></script>
-        <script src="/static/app.js"></script>
     </body>
     </html>
   `);
