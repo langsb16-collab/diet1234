@@ -110,8 +110,8 @@ app.get('/', (c) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>DietMed Global - 다이어트 의약품 검증 플랫폼</title>
         <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
-        <link href="/static/styles.css?v=fix1" rel="stylesheet">
-        <link href="/static/chatbot.css?v=fix1" rel="stylesheet">
+        <link href="/static/styles.css?v=fix2" rel="stylesheet">
+        <link href="/static/chatbot.css?v=fix2" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
         <style>
             /* 명품 라이프스타일 커스텀 색상 */
@@ -755,7 +755,7 @@ app.get('/', (c) => {
                         <button class="lang-btn" data-lang="ar" title="العربية">🇸🇦</button>
                     </div>
                     <!-- X 닫기 버튼 -->
-                    <button id="closeChatbot" class="btn-close" style="margin-left: 8px;">
+                    <button id="closeChatbot" class="btn-close" style="margin-left: 12px; width: 40px; height: 40px; background: white !important; color: #FF6B35 !important; font-size: 28px; font-weight: bold; border: 2px solid rgba(255,255,255,0.5);">
                         ✖
                     </button>
                 </div>
@@ -825,9 +825,9 @@ app.get('/', (c) => {
         </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
-        <script src="/static/app.js?v=fix1"></script>
-        <script src="/static/chatbot-data.js?v=fix1"></script>
-        <script src="/static/chatbot.js?v=fix1"></script>
+        <script src="/static/app.js?v=fix2"></script>
+        <script src="/static/chatbot-data.js?v=fix2"></script>
+        <script src="/static/chatbot.js?v=fix2"></script>
     </body>
     </html>
   `);
