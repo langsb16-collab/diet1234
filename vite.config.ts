@@ -11,5 +11,10 @@ export default defineConfig({
   ],
   css: {
     postcss: './postcss.config.js'
+  },
+  publicDir: 'public',
+  build: {
+    outDir: 'dist',
+    emptyOutDir: false
   }
 });
