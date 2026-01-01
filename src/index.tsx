@@ -111,6 +111,7 @@ app.get('/', (c) => {
         <title>DietMed Global - 다이어트 의약품 검증 플랫폼</title>
         <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
         <link href="/static/styles.css" rel="stylesheet">
+        <link href="/static/chatbot.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
         <style>
             /* 명품 라이프스타일 커스텀 색상 */
@@ -722,6 +723,89 @@ app.get('/', (c) => {
             </div>
         </main>
 
+        <!-- 챗봇 아이콘 -->
+        <div id="chatbotIcon" class="chatbot-icon">
+            <i class="fas fa-comments"></i>
+        </div>
+
+        <!-- 챗봇 윈도우 -->
+        <div id="chatbotWindow" class="chatbot-window hidden">
+            <!-- 헤더 -->
+            <div class="chatbot-header">
+                <div class="header-left">
+                    <div class="bot-avatar-small">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="header-info">
+                        <h3 id="chatbotTitle">DietMed 케어봇</h3>
+                        <span class="status-online">
+                            <i class="fas fa-circle"></i>
+                            <span id="statusText">온라인</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <!-- 언어 선택 -->
+                    <div class="language-selector">
+                        <button class="lang-btn active" data-lang="ko" title="한국어">🇰🇷</button>
+                        <button class="lang-btn" data-lang="en" title="English">🇺🇸</button>
+                        <button class="lang-btn" data-lang="zh" title="中文">🇨🇳</button>
+                        <button class="lang-btn" data-lang="ja" title="日本語">🇯🇵</button>
+                        <button class="lang-btn" data-lang="vi" title="Tiếng Việt">🇻🇳</button>
+                        <button class="lang-btn" data-lang="ar" title="العربية">🇸🇦</button>
+                    </div>
+                    <button id="closeChatbot" class="btn-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 메시지 영역 -->
+            <div id="chatMessages" class="chat-messages">
+                <!-- 웰컴 메시지 -->
+                <div class="message bot-message">
+                    <div class="bot-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-text" id="welcomeMessage">
+                            안녕하세요! 👋<br>
+                            DietMed Global 케어봇입니다.<br>
+                            무엇을 도와드릴까요?
+                        </div>
+                        <div class="message-time">방금 전</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 빠른 답변 버튼 -->
+            <div id="quickReplies" class="quick-replies"></div>
+
+            <!-- 타이핑 인디케이터 -->
+            <div id="typingIndicator" class="typing-indicator hidden">
+                <div class="bot-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+
+            <!-- 입력 영역 -->
+            <div class="chat-input-container">
+                <textarea 
+                    id="userInput" 
+                    class="chat-input" 
+                    placeholder="메시지를 입력하세요..."
+                    rows="1"></textarea>
+                <button id="sendBtn" class="btn-send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+
         <!-- Footer -->
         <footer class="bg-gradient-to-r from-orange-800 to-orange-900 text-white mt-6 py-6">
             <div class="max-w-7xl mx-auto px-4 text-center">
@@ -740,6 +824,8 @@ app.get('/', (c) => {
         </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
+        <script src="/static/chatbot-data.js"></script>
+        <script src="/static/chatbot.js"></script>
         <script src="/static/app.js"></script>
     </body>
     </html>
