@@ -35,6 +35,79 @@ app.route('/api/reviews', reviewRoutes);
 // Mount B2B widget routes
 app.route('/api/b2b', b2bWidgetRoutes);
 
+// Notices API - Sample data
+app.get('/api/notices', (c) => {
+  const notices = [
+    {
+      notice_id: '1',
+      title: '🎉 DietMed Global 서비스 오픈',
+      content: `안녕하세요, DietMed Global입니다.
+
+다이어트 약물의 안전성과 효과를 검증하는 플랫폼이 정식으로 오픈되었습니다.
+
+주요 기능:
+• 다이어트 약물 안전성 검색
+• 실시간 챗봇 상담 (25개 FAQ 지원)
+• 6개 언어 지원 (한국어, 영어, 중국어, 일본어, 베트남어, 아랍어)
+• 전문가 상담 서비스
+
+많은 이용 부탁드립니다!`,
+      created_at: '2025-12-20T09:00:00Z',
+      views: 1245
+    },
+    {
+      notice_id: '2',
+      title: '💊 Wegovy (세마글루타이드) 안전성 정보 업데이트',
+      content: `Wegovy 관련 최신 안전성 정보가 업데이트되었습니다.
+
+주요 내용:
+• FDA 승인 완료 (2021년 6월)
+• 체중 감량 효과: 평균 15-20% 감량
+• 주요 부작용: 구토, 설사, 변비 등
+• 금기 사항: 갑상선암 병력, 췌장염 이력
+
+자세한 내용은 제품 검색을 이용해 주세요.`,
+      created_at: '2025-12-18T14:30:00Z',
+      views: 892
+    },
+    {
+      notice_id: '3',
+      title: '🌍 다국어 지원 서비스 확대',
+      content: `DietMed Global이 6개 언어 지원을 시작합니다!
+
+지원 언어:
+• 한국어 🇰🇷
+• 영어 🇺🇸
+• 중국어 🇨🇳
+• 일본어 🇯🇵
+• 베트남어 🇻🇳
+• 아랍어 🇸🇦
+
+언어 선택은 상단 드롭다운에서 가능합니다.`,
+      created_at: '2025-12-15T10:00:00Z',
+      views: 634
+    },
+    {
+      notice_id: '4',
+      title: '🤖 AI 챗봇 FAQ 25개 항목 추가',
+      content: `챗봇 서비스가 대폭 강화되었습니다!
+
+새로운 기능:
+• 25개 FAQ 항목 추가
+• 다이어트 약물 관련 상세 정보
+• 부작용 및 주의사항 안내
+• 식단 및 운동 가이드
+• 의료진 상담 안내
+
+챗봇 아이콘을 클릭해 보세요!`,
+      created_at: '2025-12-10T16:00:00Z',
+      views: 1567
+    }
+  ];
+  
+  return c.json({ success: true, notices });
+});
+
 // Admin page (URL only access - No login required)
 // **Security Warning**: Anyone with this URL can access admin panel!
 // Access URL: https://puke365.net/secret-admin-panel-xyz123
