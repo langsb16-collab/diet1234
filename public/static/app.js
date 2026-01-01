@@ -1447,7 +1447,7 @@ function updateAuthUI() {
 
 // 로그인 모달 표시
 function showLogin() {
-  window.open('/login.html', '_blank', 'width=500,height=700,scrollbars=yes');
+  window.open('/login.html?v=' + Date.now(), '_blank', 'width=500,height=700,scrollbars=yes');
 }
 
 function closeLogin() {
@@ -1459,7 +1459,7 @@ function closeLogin() {
 
 // 회원가입 모달 표시
 function showRegister() {
-  window.open('/register.html', '_blank', 'width=500,height=800,scrollbars=yes');
+  window.open('/register.html?v=' + Date.now(), '_blank', 'width=500,height=800,scrollbars=yes');
 }
 
 function closeRegister() {
@@ -1543,7 +1543,7 @@ window.handleRegister = handleRegister;
 
 // 공지사항 표시
 async function showNotices() {
-  window.open('/notices.html', '_blank', 'width=600,height=700,scrollbars=yes');
+  window.open('/notices.html?v=' + Date.now(), '_blank', 'width=600,height=700,scrollbars=yes');
   return;
   
   const noticeSection = document.getElementById('noticeSection');
