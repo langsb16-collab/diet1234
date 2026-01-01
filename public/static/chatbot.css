@@ -95,23 +95,26 @@
 .header-right {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
+    flex-shrink: 0;
 }
 
 .language-selector {
     display: flex;
     gap: 4px;
+    flex-wrap: nowrap;
 }
 
 .lang-btn {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border: none;
     background: rgba(255,255,255,0.2);
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
     transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .lang-btn:hover { background: rgba(255,255,255,0.3); }
