@@ -1447,12 +1447,7 @@ function updateAuthUI() {
 
 // 로그인 모달 표시
 function showLogin() {
-  const loginModal = document.getElementById('loginModal');
-  if (loginModal) {
-    loginModal.style.display = 'flex';
-  } else {
-    console.error('loginModal element not found');
-  }
+  window.open('/login.html', '_blank', 'width=500,height=700,scrollbars=yes');
 }
 
 function closeLogin() {
@@ -1464,12 +1459,7 @@ function closeLogin() {
 
 // 회원가입 모달 표시
 function showRegister() {
-  const registerModal = document.getElementById('registerModal');
-  if (registerModal) {
-    registerModal.style.display = 'flex';
-  } else {
-    console.error('registerModal element not found');
-  }
+  window.open('/register.html', '_blank', 'width=500,height=800,scrollbars=yes');
 }
 
 function closeRegister() {
@@ -1553,6 +1543,9 @@ window.handleRegister = handleRegister;
 
 // 공지사항 표시
 async function showNotices() {
+  window.open('/notices.html', '_blank', 'width=600,height=700,scrollbars=yes');
+  return;
+  
   const noticeSection = document.getElementById('noticeSection');
   if (!noticeSection) {
     console.error('noticeSection element not found');
