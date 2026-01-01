@@ -754,8 +754,9 @@ app.get('/', (c) => {
                         <button class="lang-btn" data-lang="vi" title="Tiếng Việt">🇻🇳</button>
                         <button class="lang-btn" data-lang="ar" title="العربية">🇸🇦</button>
                     </div>
-                    <button id="closeChatbot" class="btn-close">
-                        <i class="fas fa-times"></i>
+                    <!-- X 닫기 버튼 -->
+                    <button id="closeChatbot" class="btn-close" style="margin-left: 8px;">
+                        ✖
                     </button>
                 </div>
             </div>
