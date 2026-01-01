@@ -1,16 +1,11 @@
-// 챗봇 로직 - DOMContentLoaded 후 실행
+// 챗봇 로직 - FAQ 리스트 방식
 document.addEventListener('DOMContentLoaded', function() {
   let currentLang = 'ko';
 
-  // DOM 요소
   const chatbotIcon = document.getElementById('chatbotIcon');
   const chatbotWindow = document.getElementById('chatbotWindow');
   const closeChatbot = document.getElementById('closeChatbot');
   const chatMessagesEl = document.getElementById('chatMessages');
-  const userInput = document.getElementById('userInput');
-  const sendBtn = document.getElementById('sendBtn');
-  const quickReplies = document.getElementById('quickReplies');
-  const typingIndicator = document.getElementById('typingIndicator');
   const langBtns = document.querySelectorAll('.lang-btn');
   
   if (!chatbotIcon || !chatbotWindow) {
@@ -22,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
   chatbotIcon.addEventListener('click', () => {
     chatbotWindow.classList.remove('hidden');
     chatbotIcon.style.display = 'none';
+    showFAQList();
   });
   
   closeChatbot.addEventListener('click', () => {
@@ -40,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
   function changeChatbotLanguage(lang) {
     currentLang = lang;
     
-    // 언어 버튼 active 상태
     langBtns.forEach(btn => {
       if (btn.getAttribute('data-lang') === lang) {
         btn.classList.add('active');
@@ -49,112 +44,81 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
     
-    // UI 업데이트
     const data = window.chatbotData[lang];
     document.getElementById('chatbotTitle').textContent = data.title;
     document.getElementById('statusText').textContent = data.status;
-    document.getElementById('welcomeMessage').innerHTML = data.welcome.replace(/\n/g, '<br>');
-    userInput.placeholder = data.placeholder;
     
-    updateQuickReplies();
+    showFAQList();
   }
   
-  function updateQuickReplies() {
+  function showFAQList() {
     const data = window.chatbotData[currentLang];
-    quickReplies.innerHTML = data.quickReplies.map(text => 
-      `<button class="quick-reply-btn" onclick="window.sendQuickReply('${text}')">${text}</button>`
-    ).join('');
-  }
-  
-  window.sendQuickReply = function(text) {
-    userInput.value = text;
-    sendMessage();
-  };
-  
-  function sendMessage() {
-    const message = userInput.value.trim();
-    if (!message) return;
     
-    addMessage(message, 'user');
-    userInput.value = '';
-    userInput.style.height = 'auto';
-    
-    showTypingIndicator();
-    
-    setTimeout(() => {
-      hideTypingIndicator();
-      const answer = getAutoResponse(message);
-      addMessage(answer, 'bot');
-    }, 1000);
-  }
-  
-  function getAutoResponse(userMessage) {
-    const data = window.chatbotData[currentLang];
-    const lowerMessage = userMessage.toLowerCase();
-    
-    for (const qa of data.qa) {
-      for (const keyword of qa.keywords) {
-        if (lowerMessage.includes(keyword.toLowerCase())) {
-          return qa.answer;
-        }
-      }
-    }
-    
-    return data.defaultResponse;
-  }
-  
-  function addMessage(text, type) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${type}-message`;
-    
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString(currentLang, { hour: '2-digit', minute: '2-digit' });
-    
-    if (type === 'bot') {
-      messageDiv.innerHTML = `
+    chatMessagesEl.innerHTML = `
+      <div class="message bot-message">
         <div class="bot-avatar">
           <i class="fas fa-robot"></i>
         </div>
         <div class="message-content">
-          <div class="message-text">${text.replace(/\n/g, '<br>')}</div>
-          <div class="message-time">${timeStr}</div>
+          <div class="message-text">
+            ${data.welcome.replace(/\n/g, '<br>')}
+          </div>
         </div>
-      `;
-    } else {
-      messageDiv.innerHTML = `
-        <div class="message-content">
-          <div class="message-text">${text}</div>
-          <div class="message-time">${timeStr}</div>
+      </div>
+      <div style="padding: 16px;">
+        <div style="font-weight: 600; font-size: 16px; color: #1C1C1E; margin-bottom: 12px;">
+          <i class="fas fa-list-ul" style="color: #FF6B35; margin-right: 8px;"></i>
+          ${data.faqTitle || 'FAQ'}
         </div>
-      `;
-    }
+        ${data.qa.map((item, index) => `
+          <div class="faq-item" onclick="window.showFAQAnswer(${index})" style="background: white; padding: 14px 16px; margin-bottom: 8px; border-radius: 12px; cursor: pointer; border: 1px solid #E5E5EA; transition: all 0.2s;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="flex: 1;">
+                <div style="font-size: 14px; font-weight: 600; color: #1C1C1E; margin-bottom: 4px;">
+                  ${item.question || item.keywords[0]}
+                </div>
+                <div style="font-size: 12px; color: #6E6E73;">
+                  ${item.preview || item.answer.substring(0, 50) + '...'}
+                </div>
+              </div>
+              <i class="fas fa-chevron-right" style="color: #FF6B35; font-size: 12px;"></i>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
     
-    chatMessagesEl.appendChild(messageDiv);
-    chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+    chatMessagesEl.scrollTop = 0;
   }
   
-  function showTypingIndicator() {
-    typingIndicator.classList.remove('hidden');
-    chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
-  }
+  window.showFAQAnswer = function(index) {
+    const data = window.chatbotData[currentLang];
+    const item = data.qa[index];
+    
+    chatMessagesEl.innerHTML = `
+      <div style="padding: 16px;">
+        <button onclick="window.showFAQList()" style="background: transparent; border: none; color: #FF6B35; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-arrow-left"></i>
+          ${data.backText || '목록으로'}
+        </button>
+        
+        <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #E5E5EA;">
+          <div style="font-size: 16px; font-weight: 600; color: #1C1C1E; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-question-circle" style="color: #FF6B35;"></i>
+            ${item.question || item.keywords[0]}
+          </div>
+          
+          <div style="font-size: 14px; line-height: 1.6; color: #1C1C1E;">
+            ${item.answer.replace(/\n/g, '<br>')}
+          </div>
+        </div>
+      </div>
+    `;
+    
+    chatMessagesEl.scrollTop = 0;
+  };
   
-  function hideTypingIndicator() {
-    typingIndicator.classList.add('hidden');
-  }
+  window.showFAQList = showFAQList;
   
-  sendBtn.addEventListener('click', sendMessage);
-  
-  userInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
-  
-  userInput.addEventListener('input', function() {
-    this.style.height = 'auto';
-    this.style.height = Math.min(this.scrollHeight, 100) + 'px';
-  });
-  
-  updateQuickReplies();
+  showFAQList();
 });
