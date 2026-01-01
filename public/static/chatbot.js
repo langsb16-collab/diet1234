@@ -1,7 +1,6 @@
-// 챗봇 로직
-(function() {
+// 챗봇 로직 - DOMContentLoaded 후 실행
+document.addEventListener('DOMContentLoaded', function() {
   let currentLang = 'ko';
-  let chatMessages = [];
 
   // DOM 요소
   const chatbotIcon = document.getElementById('chatbotIcon');
@@ -12,9 +11,12 @@
   const sendBtn = document.getElementById('sendBtn');
   const quickReplies = document.getElementById('quickReplies');
   const typingIndicator = document.getElementById('typingIndicator');
-  
-  // 언어 버튼들
   const langBtns = document.querySelectorAll('.lang-btn');
+  
+  if (!chatbotIcon || !chatbotWindow) {
+    console.error('Chatbot elements not found');
+    return;
+  }
   
   // 챗봇 열기/닫기
   chatbotIcon.addEventListener('click', () => {
@@ -38,7 +40,7 @@
   function changeChatbotLanguage(lang) {
     currentLang = lang;
     
-    // 언어 버튼 active 상태 변경
+    // 언어 버튼 active 상태
     langBtns.forEach(btn => {
       if (btn.getAttribute('data-lang') === lang) {
         btn.classList.add('active');
@@ -47,18 +49,16 @@
       }
     });
     
-    // UI 텍스트 업데이트
+    // UI 업데이트
     const data = window.chatbotData[lang];
     document.getElementById('chatbotTitle').textContent = data.title;
     document.getElementById('statusText').textContent = data.status;
     document.getElementById('welcomeMessage').innerHTML = data.welcome.replace(/\n/g, '<br>');
     userInput.placeholder = data.placeholder;
     
-    // 빠른 답변 업데이트
     updateQuickReplies();
   }
   
-  // 빠른 답변 업데이트
   function updateQuickReplies() {
     const data = window.chatbotData[currentLang];
     quickReplies.innerHTML = data.quickReplies.map(text => 
@@ -66,26 +66,21 @@
     ).join('');
   }
   
-  // 빠른 답변 전송
   window.sendQuickReply = function(text) {
     userInput.value = text;
     sendMessage();
   };
   
-  // 메시지 전송
   function sendMessage() {
     const message = userInput.value.trim();
     if (!message) return;
     
-    // 사용자 메시지 추가
     addMessage(message, 'user');
     userInput.value = '';
     userInput.style.height = 'auto';
     
-    // 타이핑 인디케이터 표시
     showTypingIndicator();
     
-    // 봇 응답 (1초 후)
     setTimeout(() => {
       hideTypingIndicator();
       const answer = getAutoResponse(message);
@@ -93,12 +88,10 @@
     }, 1000);
   }
   
-  // 자동 응답 생성
   function getAutoResponse(userMessage) {
     const data = window.chatbotData[currentLang];
     const lowerMessage = userMessage.toLowerCase();
     
-    // 키워드 매칭
     for (const qa of data.qa) {
       for (const keyword of qa.keywords) {
         if (lowerMessage.includes(keyword.toLowerCase())) {
@@ -107,11 +100,9 @@
       }
     }
     
-    // 기본 응답
     return data.defaultResponse;
   }
   
-  // 메시지 추가
   function addMessage(text, type) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${type}-message`;
@@ -142,7 +133,6 @@
     chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
   }
   
-  // 타이핑 인디케이터
   function showTypingIndicator() {
     typingIndicator.classList.remove('hidden');
     chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
@@ -152,10 +142,8 @@
     typingIndicator.classList.add('hidden');
   }
   
-  // 전송 버튼 클릭
   sendBtn.addEventListener('click', sendMessage);
   
-  // Enter 키 전송 (Shift+Enter는 줄바꿈)
   userInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -163,13 +151,10 @@
     }
   });
   
-  // 텍스트 영역 자동 높이 조절
   userInput.addEventListener('input', function() {
     this.style.height = 'auto';
     this.style.height = Math.min(this.scrollHeight, 100) + 'px';
   });
   
-  // 초기화
   updateQuickReplies();
-  
-})();
+});
