@@ -110,8 +110,8 @@ app.get('/', (c) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>DietMed Global - 다이어트 의약품 검증 플랫폼</title>
         <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
-        <link href="/static/styles.css?v=20260101-2" rel="stylesheet">
-        <link href="/static/chatbot.css?v=20260101-2" rel="stylesheet">
+        <link href="/static/styles.css?v=20260101-final" rel="stylesheet">
+        <link href="/static/chatbot.css?v=20260101-final" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
         <style>
             /* 명품 라이프스타일 커스텀 색상 */
@@ -824,9 +824,9 @@ app.get('/', (c) => {
         </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
-        <script src="/static/app.js?v=20260101-2"></script>
-        <script src="/static/chatbot-data.js?v=20260101-2"></script>
-        <script src="/static/chatbot.js?v=20260101-2"></script>
+        <script src="/static/app.js?v=20260101-final"></script>
+        <script src="/static/chatbot-data.js?v=20260101-final"></script>
+        <script src="/static/chatbot.js?v=20260101-final"></script>
     </body>
     </html>
   `);
